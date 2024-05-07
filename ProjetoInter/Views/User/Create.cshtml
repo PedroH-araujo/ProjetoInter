@@ -1,0 +1,36 @@
+﻿@model UserModel
+
+<div class="text-center">
+    <h1 class="display-4">
+        Novo Usuário
+    </h1>
+</div>
+
+<form asp-controller="User" asp-action="CreateUser" method="post">
+    <div class="mb-3">
+        <label for="Name" class="form-label" placeholder="Digite o seu nome">Nome</label>
+        <input type="text" asp-for="Name" class="form-control" id="Name">
+    </div>
+    <div class="mb-3">
+        <label for="Email" class="form-label" placeholder="Digite o seu email">Email</label>
+        <input type="email" asp-for="Email" class="form-control" id="Email">
+    </div>
+    <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Password</label>
+        <input type="password" asp-for="Password" class="form-control" id="exampleInputPassword1">
+    </div>
+    <div class="mb-3">
+        <label for="Address" class="form-label" placeholder="Av Bady Bassiti">Endereço</label>
+        <input type="text" asp-for="Address" class="form-control" id="Address">
+    </div>
+    <div class="mb-3">
+        <label for="Phone" class="form-label" placeholder="(00) 00000-0000">Telefone</label>
+        <input type="tel" asp-for="Phone" class="form-control" id="Phone">
+    </div>
+    <select class="form-select" asp-for="Role">
+        <option value="seller">Vendedor</option>
+        <option value="buyer">Comprador</option>
+    </select>
+    <button type="submit" class="btn btn-primary mt-3">Criar</button>
+    <button class="btn btn-secondary mt-3" asp-controller="Login" asp-action="Index">Cancelar</button>
+</form>
