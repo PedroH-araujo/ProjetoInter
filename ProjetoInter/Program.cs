@@ -15,6 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddScoped<IUserInterface, UserService>(); //Injeção de dependência
+builder.Services.AddScoped<IProductInterface, ProductService>(); //Injeção de dependência
 
 var app = builder.Build();
 

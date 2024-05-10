@@ -15,7 +15,7 @@ namespace ProjetoInter.Controllers
         }
 
         [HttpPost]
-        public IActionResult Entrar(LoginModel loginModel)
+        public IActionResult Login(LoginModel loginModel)
         {
             try
             {

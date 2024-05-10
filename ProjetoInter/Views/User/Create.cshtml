@@ -8,23 +8,26 @@
 
 <form asp-controller="User" asp-action="CreateUser" method="post">
     <div class="mb-3">
-        <label for="Name" class="form-label" placeholder="Digite o seu nome">Nome</label>
+        <label for="Name" class="form-label">Nome</label>
         <input type="text" asp-for="Name" class="form-control" id="Name">
+        @Html.ValidationMessageFor(x => x.Name, "", new { @class = "text-danger" })
     </div>
     <div class="mb-3">
-        <label for="Email" class="form-label" placeholder="Digite o seu email">Email</label>
+        <label for="Email" class="form-label" >Email</label>
         <input type="email" asp-for="Email" class="form-control" id="Email">
+        @Html.ValidationMessageFor(x => x.Email, "", new { @class = "text-danger" })
     </div>
     <div class="mb-3">
-        <label for="exampleInputPassword1" class="form-label">Password</label>
-        <input type="password" asp-for="Password" class="form-control" id="exampleInputPassword1">
+        <label for="Password" class="form-label">Password</label>
+        <input type="password" asp-for="Password" class="form-control" id="Password">
+        @Html.ValidationMessageFor(x => x.Password, "", new { @class = "text-danger" })
     </div>
     <div class="mb-3">
-        <label for="Address" class="form-label" placeholder="Av Bady Bassiti">Endereço</label>
+        <label for="Address" class="form-label" >Endereço</label>
         <input type="text" asp-for="Address" class="form-control" id="Address">
     </div>
     <div class="mb-3">
-        <label for="Phone" class="form-label" placeholder="(00) 00000-0000">Telefone</label>
+        <label for="Phone" class="form-label" >Telefone</label>
         <input type="tel" asp-for="Phone" class="form-control" id="Phone">
     </div>
     <select class="form-select" asp-for="Role">

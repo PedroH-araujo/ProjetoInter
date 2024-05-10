@@ -26,8 +26,23 @@ namespace ProjetoInter.Controllers
         [HttpPost]
         public IActionResult CreateUser(UserModel user)
         {
-            _userInterface.CreateUser(user);
-            return RedirectToAction("Index");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+
+                    _userInterface.CreateUser(user);
+                    return RedirectToAction("Index");
+                }
+
+                return View("Create");
+            }
+            catch (Exception erro)
+            {
+                TempData["MensagemErro"] = $"Ops, não coneguimos realizar seu login, tente novamente, detalhe do erro: {erro.Message}";
+                return RedirectToAction("Create");
+            }
+        
         }
     }
 }

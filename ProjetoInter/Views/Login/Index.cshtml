@@ -1,8 +1,4 @@
 ﻿@model LoginModel
-@{
-    Layout = "_LayoutDeslogado";
-    ViewData["Title"] = "Login";
-}
 
 @if (TempData["MensagemErro"] != null)
 {
@@ -14,16 +10,16 @@
     </div>
 }
 
-<form asp-controller="Login" asp-action="Entrar" method="post">
+<form asp-controller="Login" asp-action="Login" method="post">
     <div class="mb-3">
         <label for="Login" class="form-label">Email</label>
         <input type="text" asp-for="Login" class="form-control" id="Login">
-        @Html.ValidationMessageFor(x => x.Login)
+        @Html.ValidationMessageFor(x => x.Login, "", new{ @class = "text-danger"})
     </div>
     <div class="mb-3">
         <label for="Password" class="form-label">Senha</label>
         <input type="Password" asp-for="Password" class="form-control" id="Password">
-        @Html.ValidationMessageFor(x => x.Password)
+        @Html.ValidationMessageFor(x => x.Password, "", new { @class = "text-danger" })
     </div>
     <button type="submit" class="btn btn-primary">Entrar</button>
     <button type="submit" asp-controller="User" asp-action="Create" class="btn btn-secondary">Cadastrar</button>
