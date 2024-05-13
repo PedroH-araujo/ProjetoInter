@@ -1,17 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjetoInter.Helper;
 using ProjetoInter.Models;
 using ProjetoInter.Services.User;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ProjetoInter.Controllers
 {
-    public class LoginController(IUserInterface userInterface) : Controller
+    public class LoginController(IUserInterface userInterface, ISessionInterface session) : Controller
     {
         private readonly IUserInterface _userInterface = userInterface;
+        private readonly ISessionInterface _session = session;
 
         public IActionResult Index()
         {
+            // redireciona usuario logado para a home
+
+            if (_session.GetUserSession() != null) return RedirectToAction("Index", "Home");
             return View();
+        }
+
+        public IActionResult LogOut()
+        {
+            _session.RemoveUserSession();
+            return RedirectToAction("Index", "Login");
         }
 
         [HttpPost]
@@ -28,7 +39,7 @@ namespace ProjetoInter.Controllers
                     {
                         if (user.ValidPassword(loginModel.Password))
                         {
-
+                            _session.CreateUserSession(user);
                             return RedirectToAction("Index", "Home");
                         }
 

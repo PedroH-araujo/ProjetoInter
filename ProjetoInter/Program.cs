@@ -2,6 +2,8 @@ using ProjetoInter.Data;
 using ProjetoInter.Services.User;
 using ProjetoInter.Services.Produto;
 using Microsoft.EntityFrameworkCore;
+using ProjetoInter.Helper;
+using ProjetoInter.Services.MarketCar;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,8 +16,20 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddScoped<IUserInterface, UserService>(); //Injeção de dependência
-builder.Services.AddScoped<IProductInterface, ProductService>(); //Injeção de dependência
+//Injeção de dependência
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<IUserInterface, UserService>(); 
+builder.Services.AddScoped<IProductInterface, ProductService>();
+builder.Services.AddScoped<ISessionInterface, Session>();
+builder.Services.AddScoped<IMarketCarInterface, MarketCarService>();
+
+builder.Services.AddDistributedMemoryCache(); //armazena as informações da sessão no cahce
+
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true; //cookie só pode ser acessado via http
+    options.Cookie.IsEssential = true; // Isso significa que mesmo que o usuário tenha optado por não aceitar cookies, este cookie será enviado com cada solicitação HTTP, garantindo que a sessão funcione corretamente.
+});
 
 var app = builder.Build();
 
@@ -31,6 +45,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthorization();
 

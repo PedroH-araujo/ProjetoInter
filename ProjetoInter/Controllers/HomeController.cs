@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProjetoInter.Models;
+using ProjetoInter.Services.MarketCar;
+using ProjetoInter.Services.Produto;
 using System.Diagnostics;
 
 namespace ProjetoInter.Controllers
@@ -7,15 +9,28 @@ namespace ProjetoInter.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IProductInterface _productInterface;
+        private readonly IMarketCarInterface _marketCarInterface;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IProductInterface productInterface, IMarketCarInterface marketCarInterface)
         {
             _logger = logger;
+            _productInterface = productInterface;
+            _marketCarInterface = marketCarInterface;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string? search)
         {
-            return View();
+            if (search == null)
+            {
+                var products = await _productInterface.GetProducts();
+                return View(products);
+            }
+            else
+            {
+                var products = await _productInterface.GetFilteredProducts(search);
+                return View(products);
+            }
         }
 
         public IActionResult Privacy()

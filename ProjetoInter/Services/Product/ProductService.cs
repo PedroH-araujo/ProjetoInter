@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using ProjetoInter.Data;
 using ProjetoInter.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ProjetoInter.Services.Produto
 {
@@ -8,18 +10,24 @@ namespace ProjetoInter.Services.Produto
     {
         private readonly AppDbContext _dbContext;
         private readonly string _system;
-        public ProductService(AppDbContext dbContext, IWebHostEnvironment system)
+        private readonly IHttpContextAccessor _httpContext;
+        public ProductService(AppDbContext dbContext, IWebHostEnvironment system, IHttpContextAccessor _httpContext)
         {
             this._dbContext = dbContext;
             this._system = system.WebRootPath;
+            this._httpContext = _httpContext;
         }
-        public ProductModel CreateProduct(ProductModel product, IFormFile image)
+        public async Task<ProductModel> CreateProduct(ProductModel product, IFormFile image)
         {
-            var imageUrl = GetImageUrl(image);
+            var imageUrl = (image != null) ? GetImageUrl(image) : null;
             product.ImageUrl = imageUrl;
 
+            UserModel user = GetUser();
+
+            product.SellerId = user.Id.ToString();
+
             _dbContext.Products.Add(product);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             return product;
         }
@@ -45,13 +53,159 @@ namespace ProjetoInter.Services.Produto
             return ImageUrl;
         }
 
+        private UserModel GetUser()
+        {
+            string userSession = _httpContext.HttpContext.Session.GetString("sessionUserLogged");
+            UserModel user = JsonConvert.DeserializeObject<UserModel>(userSession);
+
+            return user;
+        }
+
+        public async Task<List<ProductModel>> GetMyProducts()
+        {
+            UserModel user = GetUser();
+            try
+            {
+                return await _dbContext.Products.Where(product => product.SellerId == user.Id.ToString()).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<List<ProductModel>> GetProducts()
         {
             try
             {
-                return await _dbContext.Products.ToListAsync();
+                List<ProductModel> products = await _dbContext.Products.ToListAsync();
+                var updatedProducts = await SetIsProductInMyMarketCart(products);
+                return updatedProducts;
             }
             catch(Exception ex) 
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ProductModel> GetProductById(Guid id)
+        {
+            try
+            {
+                return await _dbContext.Products.FirstOrDefaultAsync(product => product.Id == id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ProductModel> UpdateProduct(ProductModel product, IFormFile image)
+        {
+            try
+            {
+                var dbProduct = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == product.Id);
+
+                if (dbProduct == null)
+                {
+                    throw new Exception("Product not found.");
+                }
+
+                var newUrlImage = "";
+
+                if (image != null)
+                {
+                    string urlImageActual = _system + "\\imagem\\" + dbProduct.ImageUrl;
+
+                    if (File.Exists(urlImageActual))
+                    {
+                        File.Delete(urlImageActual);
+                    }
+
+                    newUrlImage = GetImageUrl(image);
+
+                }
+
+                if (newUrlImage != "")
+                {
+                    dbProduct.ImageUrl = newUrlImage;
+                }
+
+                dbProduct.Title = product.Title;
+                dbProduct.Description = product.Description;
+                dbProduct.Status = product.Status;
+                dbProduct.Value = product.Value;
+
+                _dbContext.Update(dbProduct);
+                await _dbContext.SaveChangesAsync();
+
+                return dbProduct;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ProductModel> DeleteProduct(Guid id)
+        {
+            try
+            {
+                var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
+
+                if (product.ImageUrl != null)
+                {
+                    string urlImageActual = _system + "\\imagem\\" + product.ImageUrl;
+
+                    File.Delete(urlImageActual);
+                }
+
+                _dbContext.Remove(product);
+                await _dbContext.SaveChangesAsync();
+
+                return product;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<ProductModel>> GetFilteredProducts(string? filter)
+        {
+            try
+            {
+                var products = await _dbContext.Products.Where(p => p.Title.Contains(filter)).ToListAsync();
+                var updatedProducts = await SetIsProductInMyMarketCart(products);
+                return updatedProducts;
+
+            } 
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private async Task<List<ProductModel>> SetIsProductInMyMarketCart(List<ProductModel> products)
+        {
+            var user = GetUser();
+            var myMarketCar = await GetMyMarketCars(user.Id);
+
+            foreach (var product in products)
+            {
+                product.IsProductInMyMarketCart = myMarketCar.Any(mc => mc.Id.ToString() == product.MarketCartId.ToString());
+            }
+
+            return products;
+        }
+
+        public async Task<List<MarketCarModel>> GetMyMarketCars(Guid userId)
+        {
+            try
+            {
+                return await _dbContext.MarketCars.Where(m => m.UserId == userId.ToString()).ToListAsync();
+            }
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }

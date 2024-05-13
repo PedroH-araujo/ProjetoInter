@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjetoInter.Models
 {
@@ -22,5 +23,7 @@ namespace ProjetoInter.Models
         public string? ImageUrl { get; set; }
         public string? SellerId { get; set; }
         public string? MarketCartId { get; set; }
+        [NotMapped]
+        public bool IsProductInMyMarketCart { get; set; }
     }
 }
