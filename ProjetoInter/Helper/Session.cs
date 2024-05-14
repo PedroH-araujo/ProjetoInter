@@ -18,24 +18,9 @@ namespace ProjetoInter.Helper
         {
             // Transformar o objeto usuario em string
             string userString = JsonConvert.SerializeObject(user);
-          //  Task<List<MarketCarModel>> userMarketCar = GetUserMarketCar(user);
-          //  string userMarketCarString = JsonConvert.SerializeObject(userMarketCar);
 
             _httpContext.HttpContext.Session.SetString("sessionUserLogged", userString);
-           // _httpContext.HttpContext.Session.SetString("sessionUserMarketCar", userMarketCarString);
         }
-
-       /* private async Task<List<MarketCarModel>> GetUserMarketCar(UserModel user)
-        {
-            try
-            {
-                return await _dbContext.MarketCars.Where(marketCar => marketCar.UserId.ToString() == user.Id.ToString()).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }*/
 
         public UserModel? GetUserSession()
         {
@@ -50,6 +35,13 @@ namespace ProjetoInter.Helper
         public void RemoveUserSession()
         {
             _httpContext.HttpContext.Session.Remove("sessionUserLogged");
+        }
+
+        public void UpdateUserSession(UserModel user)
+        {
+            RemoveUserSession();
+
+            CreateUserSession(user);
         }
     }
 }

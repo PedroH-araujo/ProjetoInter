@@ -1,18 +1,23 @@
-﻿using ProjetoInter.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using ProjetoInter.Data;
 using ProjetoInter.Models;
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ProjetoInter.Services.User
 {
     public class UserService : IUserInterface
     {
         private readonly AppDbContext _dbContext;
+        private readonly IHttpContextAccessor _httpContext;
 
-        public UserService(AppDbContext dbContext)
+        public UserService(AppDbContext dbContext, IHttpContextAccessor httpContext)
         {
             this._dbContext = dbContext;
+            _httpContext = httpContext;
         }
 
         private string hashKey = "AD5DC23AF55662306";
@@ -51,6 +56,42 @@ namespace ProjetoInter.Services.User
         public UserModel SearchByUsername(string username)
         {
             return _dbContext.Users.FirstOrDefault(user => user.Email.ToLower().Equals(username.ToLower()));
+        }
+
+        public async Task<UserModel> UpdateUser(UserModel user)
+        {
+            try
+            {
+                var dbUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
+
+                dbUser.Name = user.Name;
+                dbUser.Email = user.Email;
+                dbUser.Address = user.Address;
+                dbUser.Phone = user.Phone;
+                dbUser.Role = user.Role;
+
+                _dbContext.Update(dbUser);
+                await _dbContext.SaveChangesAsync();
+
+                return dbUser;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private UserModel GetUser()
+        {
+            string userSession = _httpContext.HttpContext.Session.GetString("sessionUserLogged");
+            UserModel user = JsonConvert.DeserializeObject<UserModel>(userSession);
+
+            return user;
+        }
+
+        public UserModel GetUserById()
+        {
+            return _dbContext.Users.FirstOrDefault(user => user.Id == GetUser().Id);
         }
     }
 }

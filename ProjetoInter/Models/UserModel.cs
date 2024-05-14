@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -24,7 +25,11 @@ namespace ProjetoInter.Models
         public string? Address { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now; // Valor padrão: data e hora atual
         public string? Phone { get; set; }
-        public string? MarketCartId { get; set; }
+        // public string? MarketCartId { get; set; }
+        [NotMapped]
+        public ICollection<ProductModel>? ProductsSold { get; set; }
+        [NotMapped]
+        public ICollection<MarketCarModel>? MarketCars { get; set; }
 
         public bool ValidPassword(string providedPassword)
         {

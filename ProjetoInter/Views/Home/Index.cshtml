@@ -1,5 +1,5 @@
 ﻿@using ProjetoInter.Controllers
-@model IEnumerable<ProductModel>
+@model HomeIndexViewModel
 
 <div class="py-5">
 
@@ -15,9 +15,9 @@
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-0 ">
             @if (Model != null)
             {
-                if (Model.Count() > 0)
+                if (Model.Products.Count() > 0)
                 {
-                    @foreach (var product in Model)
+                    @foreach (var product in Model.Products)
                     {
                         <div class="card mx-3 my-3 text-center justify-content-center d-flex align-content-center" style="width: 12rem;">
                             @if (product.ImageUrl != null)

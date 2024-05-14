@@ -7,6 +7,7 @@ namespace ProjetoInter.Helper
         void CreateUserSession(UserModel user);
         void RemoveUserSession();
         UserModel GetUserSession();
+        void UpdateUserSession(UserModel user);
 
     }
 }

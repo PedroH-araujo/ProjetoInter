@@ -6,6 +6,8 @@ namespace ProjetoInter.Services.User
     {
 
         UserModel SearchByUsername(string username);
+        UserModel GetUserById();
         UserModel CreateUser(UserModel user);
+        Task<UserModel> UpdateUser(UserModel user);
     }
 }

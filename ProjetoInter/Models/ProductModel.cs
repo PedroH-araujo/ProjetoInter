@@ -21,9 +21,15 @@ namespace ProjetoInter.Models
         public ProductStatus Status { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now; // Valor padrão: data e hora atual
         public string? ImageUrl { get; set; }
-        public string? SellerId { get; set; }
-        public string? MarketCartId { get; set; }
+        public Guid? SellerId { get; set; }
+        [NotMapped]
+        public UserModel? Seller { get; set; } // Propriedade de navegação
+        public Guid[]? MarketCartId { get; set; }
         [NotMapped]
         public bool IsProductInMyMarketCart { get; set; }
+        [NotMapped]
+        public ICollection<MarketCarModel>? MarketCars { get; set; }
+
+
     }
 }

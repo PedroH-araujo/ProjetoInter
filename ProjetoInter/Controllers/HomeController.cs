@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ProjetoInter.Models;
 using ProjetoInter.Services.MarketCar;
 using ProjetoInter.Services.Produto;
+using ProjetoInter.Services.User;
 using System.Diagnostics;
 
 namespace ProjetoInter.Controllers
@@ -11,25 +13,38 @@ namespace ProjetoInter.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IProductInterface _productInterface;
         private readonly IMarketCarInterface _marketCarInterface;
+        private readonly IHttpContextAccessor _httpContext;
 
-        public HomeController(ILogger<HomeController> logger, IProductInterface productInterface, IMarketCarInterface marketCarInterface)
+        public HomeController(ILogger<HomeController> logger, IProductInterface productInterface, IMarketCarInterface marketCarInterface, IHttpContextAccessor httpContext)
         {
             _logger = logger;
             _productInterface = productInterface;
             _marketCarInterface = marketCarInterface;
+            _httpContext = httpContext;
         }
 
         public async Task<IActionResult> Index(string? search)
         {
+            var viewModel = new HomeIndexViewModel();
+            string userSession = _httpContext.HttpContext.Session.GetString("sessionUserLogged");
+            UserModel user = JsonConvert.DeserializeObject<UserModel>(userSession);
+            if (user == null)
+            {
+                Console.WriteLine("NAO TEM USER");
+            }
+            viewModel.User = user;
+
             if (search == null)
             {
                 var products = await _productInterface.GetProducts();
-                return View(products);
+                viewModel.Products = products;
+                return View(viewModel);
             }
             else
             {
                 var products = await _productInterface.GetFilteredProducts(search);
-                return View(products);
+                viewModel.Products = products;
+                return View(viewModel);
             }
         }
 

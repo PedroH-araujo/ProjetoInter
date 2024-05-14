@@ -12,8 +12,8 @@ using ProjetoInter.Data;
 namespace ProjetoInter.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240505160145_update-Table")]
-    partial class updateTable
+    [Migration("20240514144910_novoDB")]
+    partial class novoDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,15 +34,17 @@ namespace ProjetoInter.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ProductId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("MarketCars");
                 });
@@ -61,16 +63,13 @@ namespace ProjetoInter.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MarketCartId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SellerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("SellerId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -79,7 +78,13 @@ namespace ProjetoInter.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("SellerId");
 
                     b.ToTable("Products");
                 });
@@ -100,9 +105,6 @@ namespace ProjetoInter.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MarketCartId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -120,6 +122,46 @@ namespace ProjetoInter.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("ProjetoInter.Models.MarketCarModel", b =>
+                {
+                    b.HasOne("ProjetoInter.Models.ProductModel", "Product")
+                        .WithMany("MarketCars")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjetoInter.Models.UserModel", "User")
+                        .WithMany("MarketCars")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ProjetoInter.Models.ProductModel", b =>
+                {
+                    b.HasOne("ProjetoInter.Models.UserModel", "Seller")
+                        .WithMany("ProductsSold")
+                        .HasForeignKey("SellerId");
+
+                    b.Navigation("Seller");
+                });
+
+            modelBuilder.Entity("ProjetoInter.Models.ProductModel", b =>
+                {
+                    b.Navigation("MarketCars");
+                });
+
+            modelBuilder.Entity("ProjetoInter.Models.UserModel", b =>
+                {
+                    b.Navigation("MarketCars");
+
+                    b.Navigation("ProductsSold");
                 });
 #pragma warning restore 612, 618
         }

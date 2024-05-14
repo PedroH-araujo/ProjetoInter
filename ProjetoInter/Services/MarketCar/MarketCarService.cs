@@ -21,13 +21,13 @@ namespace ProjetoInter.Services.MarketCar
             try
             {
                 MarketCarModel productInMarketCar = new MarketCarModel();
-                productInMarketCar.ProductId = productId.ToString();
-                productInMarketCar.UserId = GetUser().Id.ToString();
+                productInMarketCar.ProductId = productId;
+                productInMarketCar.UserId = GetUser().Id;
 
                 _dbContext.Add(productInMarketCar);
                 await _dbContext.SaveChangesAsync();
 
-                await UpdateProduct(productInMarketCar.Id, productId);
+                await AddProductMarketCarId(productInMarketCar.Id, productId);
                 return productInMarketCar;
 
             }
@@ -37,16 +37,56 @@ namespace ProjetoInter.Services.MarketCar
             }
         }
 
-        private async Task UpdateProduct(Guid productMarketCarId, Guid productId)
+        private async Task AddProductMarketCarId(Guid productMarketCarId, Guid productId)
         {
             try
             {
                 ProductModel product = await GetProductById(productId);
-                product.MarketCartId = productMarketCarId.ToString();
+
+                // Verifique se o MarketCartId já está inicializado, se não estiver, inicialize-o como um novo array
+                if (product.MarketCartId == null)
+                {
+                    product.MarketCartId = new Guid[] { productMarketCarId };
+                }
+                else
+                {
+                    // Crie um novo array com um elemento extra e copie os valores do array original
+                    Guid[] newMarketCartId = new Guid[product.MarketCartId.Length + 1]; // cria novo array com o tamanho do (product.MarketCartId) + 1
+                    Array.Copy(product.MarketCartId, newMarketCartId, product.MarketCartId.Length); //copia os elementos de product.MarketCartId para newMarketCartId com o tamanho product.MarketCartId.Length
+                    newMarketCartId[newMarketCartId.Length - 1] = productMarketCarId; //adiciona productMarketCarId ao final do array
+                    product.MarketCartId = newMarketCartId;
+                }
 
                 _dbContext.Update(product);
                 await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
+        private async Task RemoveProductMarketCarId(Guid productMarketCarId, Guid productId)
+        {
+            try
+            {
+                ProductModel product = await GetProductById(productId);
+
+                // Verifica se o MarketCartId está inicializado e contém o elemento que queremos remover
+                if (product.MarketCartId != null && product.MarketCartId.Contains(productMarketCarId))
+                {
+                    // Converte o array para uma lista para facilitar a remoção do elemento
+                    List<Guid> marketCartList = product.MarketCartId.ToList();
+
+                    // Remove o elemento específico da lista
+                    marketCartList.Remove(productMarketCarId);
+
+                    // Atualiza o array no objeto product com a lista resultante
+                    product.MarketCartId = marketCartList.ToArray();
+
+                    _dbContext.Update(product);
+                    await _dbContext.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -69,9 +109,9 @@ namespace ProjetoInter.Services.MarketCar
         public async Task<MarketCarModel> RemoveFromMarketCar(Guid productId)
         {
             MarketCarModel productInMarketCar = new MarketCarModel();
-            string productIdString = productId.ToString();
-            string userId = GetUser().Id.ToString();
-            productInMarketCar = await _dbContext.MarketCars.FirstOrDefaultAsync(marketCar => marketCar.UserId == userId && marketCar.ProductId == productIdString);
+            Guid userId = GetUser().Id;
+            productInMarketCar = await _dbContext.MarketCars.FirstOrDefaultAsync(marketCar => marketCar.UserId == userId && marketCar.ProductId == productId);
+            await RemoveProductMarketCarId(productInMarketCar.Id, productId);
 
             _dbContext.Remove(productInMarketCar);
             await _dbContext.SaveChangesAsync();
@@ -90,7 +130,7 @@ namespace ProjetoInter.Services.MarketCar
         {
             try
             {
-                return await _dbContext.MarketCars.FirstOrDefaultAsync(marketCar => marketCar.UserId == userId.ToString());
+                return await _dbContext.MarketCars.FirstOrDefaultAsync(marketCar => marketCar.UserId == userId);
             }
             catch (Exception ex)
             {

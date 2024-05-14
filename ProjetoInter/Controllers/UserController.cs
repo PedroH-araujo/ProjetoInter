@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ProjetoInter.Helper;
 using ProjetoInter.Models;
+using ProjetoInter.Services.Produto;
 using ProjetoInter.Services.User;
 
 namespace ProjetoInter.Controllers
 {
-    public class UserController(IUserInterface userInterface) : Controller
+    public class UserController(IUserInterface userInterface, ISessionInterface session) : Controller
     {
         private readonly IUserInterface _userInterface = userInterface;
+        private readonly ISessionInterface _session = session;
 
         public IActionResult Index()
         {
@@ -20,7 +23,30 @@ namespace ProjetoInter.Controllers
 
         public IActionResult Update()
         {
-            return View();
+            var user = _userInterface.GetUserById();
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateUser(UserModel user)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    await _userInterface.UpdateUser(user);
+                    _session.UpdateUserSession(user);
+                    return RedirectToAction("Index", "Home");
+                }
+
+                return View("Update");
+            }
+            catch (Exception erro)
+            {
+                TempData["MensagemErro"] = $"Ops, não conseguimos atualizar seus dados,por favor tente novamente, detalhe do erro: {erro.Message}";
+                return RedirectToAction("Create");
+            }
+
         }
 
         [HttpPost]
@@ -32,14 +58,15 @@ namespace ProjetoInter.Controllers
                 {
 
                     _userInterface.CreateUser(user);
-                    return RedirectToAction("Index");
+                    _session.CreateUserSession(user);
+                    return RedirectToAction("Index", "Home");
                 }
 
                 return View("Create");
             }
             catch (Exception erro)
             {
-                TempData["MensagemErro"] = $"Ops, não coneguimos realizar seu login, tente novamente, detalhe do erro: {erro.Message}";
+                TempData["MensagemErro"] = $"Ops, não coneguimos cadastrar seus dados, tente novamente, detalhe do erro: {erro.Message}";
                 return RedirectToAction("Create");
             }
         

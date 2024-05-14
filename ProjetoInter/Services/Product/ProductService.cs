@@ -24,7 +24,7 @@ namespace ProjetoInter.Services.Produto
 
             UserModel user = GetUser();
 
-            product.SellerId = user.Id.ToString();
+            product.SellerId = user.Id;
 
             _dbContext.Products.Add(product);
             await _dbContext.SaveChangesAsync();
@@ -66,7 +66,7 @@ namespace ProjetoInter.Services.Produto
             UserModel user = GetUser();
             try
             {
-                return await _dbContext.Products.Where(product => product.SellerId == user.Id.ToString()).ToListAsync();
+                return await _dbContext.Products.Where(product => product.SellerId == user.Id).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -79,8 +79,8 @@ namespace ProjetoInter.Services.Produto
             try
             {
                 List<ProductModel> products = await _dbContext.Products.ToListAsync();
-                var updatedProducts = await SetIsProductInMyMarketCart(products);
-                return updatedProducts;
+                var formattedProducts = await SetIsProductInMyMarketCart(products);
+                return formattedProducts;
             }
             catch(Exception ex) 
             {
@@ -98,6 +98,21 @@ namespace ProjetoInter.Services.Produto
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        private async Task<List<ProductModel>> SetIsProductInMyMarketCart(List<ProductModel> products)
+        {
+            var user = GetUser();
+            var myMarketCar = await GetMyMarketCars(user.Id);
+
+            foreach (var product in products)
+            {
+                if (product.MarketCartId.ToArray() == null || product.MarketCartId.ToArray().Length == 0) continue;
+
+                product.IsProductInMyMarketCart = myMarketCar.Any(mc => product.MarketCartId.Contains(mc.Id));
+            }
+
+            return products;
         }
 
         public async Task<ProductModel> UpdateProduct(ProductModel product, IFormFile image)
@@ -176,8 +191,8 @@ namespace ProjetoInter.Services.Produto
             try
             {
                 var products = await _dbContext.Products.Where(p => p.Title.Contains(filter)).ToListAsync();
-                var updatedProducts = await SetIsProductInMyMarketCart(products);
-                return updatedProducts;
+                var formattedProducts = await SetIsProductInMyMarketCart(products);
+                return formattedProducts;
 
             } 
             catch (Exception ex)
@@ -186,24 +201,13 @@ namespace ProjetoInter.Services.Produto
             }
         }
 
-        private async Task<List<ProductModel>> SetIsProductInMyMarketCart(List<ProductModel> products)
-        {
-            var user = GetUser();
-            var myMarketCar = await GetMyMarketCars(user.Id);
-
-            foreach (var product in products)
-            {
-                product.IsProductInMyMarketCart = myMarketCar.Any(mc => mc.Id.ToString() == product.MarketCartId.ToString());
-            }
-
-            return products;
-        }
+        
 
         public async Task<List<MarketCarModel>> GetMyMarketCars(Guid userId)
         {
             try
             {
-                return await _dbContext.MarketCars.Where(m => m.UserId == userId.ToString()).ToListAsync();
+                return await _dbContext.MarketCars.Where(m => m.UserId == userId).ToListAsync();
             }
             catch (Exception ex)
             {
