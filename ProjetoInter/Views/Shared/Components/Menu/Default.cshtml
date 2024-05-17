@@ -8,20 +8,27 @@
 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
     <ul class="navbar-nav flex-grow-1">
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Update">Perfil</a>
+            <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="Update">Perfil</a>
         </li>
         @if(Model.Role == UserRole.seller)
         {
             <li class="nav-item">
-                <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Meus produtos</a>
+                <a class="nav-link text-white" asp-area="" asp-controller="Product" asp-action="Index">Meus produtos</a>
             </li>
         }
+        <li class="nav-item position-relative">
+            <a class="nav-link text-white " asp-area="" asp-controller="User" asp-action="Update">Meu carrinho</a>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                @Model.MarketCarProductsCount
+                <span class="visually-hidden">unread messages</span>
+            </span>
+        </li>
        
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="LogOut">Sair</a>
+            <a class="nav-link text-white" asp-area="" asp-controller="Login" asp-action="LogOut">Sair</a>
         </li>
     </ul>
 </div>

@@ -25,7 +25,8 @@ namespace ProjetoInter.Models
         public string? Address { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now; // Valor padrão: data e hora atual
         public string? Phone { get; set; }
-        // public string? MarketCartId { get; set; }
+        [NotMapped]
+        public int? MarketCarProductsCount { get; set; }
         [NotMapped]
         public ICollection<ProductModel>? ProductsSold { get; set; }
         [NotMapped]
@@ -33,8 +34,8 @@ namespace ProjetoInter.Models
 
         public bool ValidPassword(string providedPassword)
         {
-            bool correspondente = VerificarCorrespondencia(providedPassword, Password);
-            return correspondente;
+            bool isMatchPassword = CheckIfMatchPassword(providedPassword, Password);
+            return isMatchPassword;
         }
 
         static string CalcularHash(string password, string key)
@@ -48,10 +49,10 @@ namespace ProjetoInter.Models
             return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
         }
 
-        static bool VerificarCorrespondencia(string texto, string hashEsperado)
+        static bool CheckIfMatchPassword(string text, string bdHash)
         {
-            string hashCalculado = CalcularHash(texto, "AD5DC23AF55662306");
-            return hashCalculado == hashEsperado;
+            string hashCalculado = CalcularHash(text, "AD5DC23AF55662306");
+            return hashCalculado == bdHash;
         }
 
 

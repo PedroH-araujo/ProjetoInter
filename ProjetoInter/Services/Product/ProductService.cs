@@ -78,7 +78,7 @@ namespace ProjetoInter.Services.Produto
         {
             try
             {
-                List<ProductModel> products = await _dbContext.Products.ToListAsync();
+                List<ProductModel> products = await _dbContext.Products.Where(p => p.SellerId != GetUser().Id).ToListAsync();
                 var formattedProducts = await SetIsProductInMyMarketCart(products);
                 return formattedProducts;
             }
@@ -105,11 +105,16 @@ namespace ProjetoInter.Services.Produto
             var user = GetUser();
             var myMarketCar = await GetMyMarketCars(user.Id);
 
-            foreach (var product in products)
-            {
-                if (product.MarketCartId.ToArray() == null || product.MarketCartId.ToArray().Length == 0) continue;
+            var myMarketCarIds = myMarketCar.Select(mc => mc.Id).ToHashSet();
 
-                product.IsProductInMyMarketCart = myMarketCar.Any(mc => product.MarketCartId.Contains(mc.Id));
+            for (int i = 0; i < products.Count; i++)
+            {
+                var product = products[i];
+                var marketCartIds = product.MarketCartId;
+
+                if (marketCartIds == null || marketCartIds.Length == 0) continue;
+
+                product.IsProductInMyMarketCart = marketCartIds.Any(id => myMarketCarIds.Contains(id));
             }
 
             return products;
@@ -190,7 +195,7 @@ namespace ProjetoInter.Services.Produto
         {
             try
             {
-                var products = await _dbContext.Products.Where(p => p.Title.Contains(filter)).ToListAsync();
+                var products = await _dbContext.Products.Where(p => p.Title.Contains(filter) && p.SellerId != GetUser().Id).ToListAsync();
                 var formattedProducts = await SetIsProductInMyMarketCart(products);
                 return formattedProducts;
 

@@ -9,5 +9,6 @@ namespace ProjetoInter.Services.User
         UserModel GetUserById();
         UserModel CreateUser(UserModel user);
         Task<UserModel> UpdateUser(UserModel user);
+        UserModel GetUserMarketCarCount(UserModel user);
     }
 }

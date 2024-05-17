@@ -93,5 +93,12 @@ namespace ProjetoInter.Services.User
         {
             return _dbContext.Users.FirstOrDefault(user => user.Id == GetUser().Id);
         }
+
+        public UserModel GetUserMarketCarCount(UserModel user)
+        {
+            int count = _dbContext.MarketCars.Where(mc => mc.UserId == user.Id).Count();
+            user.MarketCarProductsCount = count;
+            return user;
+        }
     }
 }
