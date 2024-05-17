@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using ProjetoInter.Helper;
 using ProjetoInter.Services.MarketCar;
 
+//     "DefaultConnection": "server=localhost;database=Production;User=aluno;Password=dba;TrustServerCertificate=True"
+//     "DefaultConnection": "server=DESKTOP-K2MKISJ; database=Production; trusted_connection = true; trustservercertificate=true"
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,19 +18,19 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-//Injeção de dependência
+//Injeï¿½ï¿½o de dependï¿½ncia
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<IUserInterface, UserService>(); 
 builder.Services.AddScoped<IProductInterface, ProductService>();
 builder.Services.AddScoped<ISessionInterface, Session>();
 builder.Services.AddScoped<IMarketCarInterface, MarketCarService>();
 
-builder.Services.AddDistributedMemoryCache(); //armazena as informações da sessão no cahce
+builder.Services.AddDistributedMemoryCache(); //armazena as informaï¿½ï¿½es da sessï¿½o no cahce
 
 builder.Services.AddSession(options =>
 {
-    options.Cookie.HttpOnly = true; //cookie só pode ser acessado via http
-    options.Cookie.IsEssential = true; // Isso significa que mesmo que o usuário tenha optado por não aceitar cookies, este cookie será enviado com cada solicitação HTTP, garantindo que a sessão funcione corretamente.
+    options.Cookie.HttpOnly = true; //cookie sï¿½ pode ser acessado via http
+    options.Cookie.IsEssential = true; // Isso significa que mesmo que o usuï¿½rio tenha optado por nï¿½o aceitar cookies, este cookie serï¿½ enviado com cada solicitaï¿½ï¿½o HTTP, garantindo que a sessï¿½o funcione corretamente.
 });
 
 var app = builder.Build();

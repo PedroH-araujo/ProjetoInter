@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using ProjetoInter.Data;
 using ProjetoInter.Models;
@@ -126,13 +127,44 @@ namespace ProjetoInter.Services.MarketCar
             return user;
         }
 
-        public async Task<MarketCarModel> GetMyMarketCars(Guid userId)
+       public async Task<List<MarketCarModel>> GetMyMarketCars(Guid userId)
         {
             try
             {
-                return await _dbContext.MarketCars.FirstOrDefaultAsync(marketCar => marketCar.UserId == userId);
+                return await _dbContext.MarketCars.Where(m => m.UserId == userId).ToListAsync();
             }
             catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async  Task<List<ProductModel>> GetProductsInMyMarketCar()
+        {
+             try
+            {
+                List<ProductModel> myProducts;
+                var myMarketCars = await GetMyMarketCars(GetUser().Id);
+                List<ProductModel> products = await _dbContext.Products.ToListAsync();
+                var myMarketCarIds = myMarketCars.Select(mc => mc.Id).ToHashSet();
+
+                for (int i = 0; i < products.Count; i++)
+                {
+                    var product = products[i];
+                    var marketCartIds = product.MarketCartId;
+
+                    if (marketCartIds == null || marketCartIds.Length == 0) continue;
+
+                    product.IsProductInMyMarketCart = marketCartIds.Any(id => myMarketCarIds.Contains(id));
+                    if(product.IsProductInMyMarketCart){
+                        
+                    }
+                }
+
+                return products;
+
+            }
+            catch(Exception ex) 
             {
                 throw new Exception(ex.Message);
             }

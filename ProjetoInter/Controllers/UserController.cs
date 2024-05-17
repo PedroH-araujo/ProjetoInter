@@ -6,10 +6,11 @@ using ProjetoInter.Services.User;
 
 namespace ProjetoInter.Controllers
 {
-    public class UserController(IUserInterface userInterface, ISessionInterface session) : Controller
+    public class UserController(IUserInterface userInterface, ISessionInterface session, IProductInterface productInterface) : Controller
     {
         private readonly IUserInterface _userInterface = userInterface;
         private readonly ISessionInterface _session = session;
+        private readonly IProductInterface _productInterface = productInterface;
 
         public IActionResult Index()
         {
@@ -34,9 +35,18 @@ namespace ProjetoInter.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await _userInterface.UpdateUser(user);
-                    _session.UpdateUserSession(user);
-                    return RedirectToAction("Index", "Home");
+                    if(user.Role == UserRole.buyer) {
+                       var myProducts = await _productInterface.GetMyProducts();
+                       if(myProducts.Count() != 0) {
+                        TempData["MensagemErro"] = $"Para deixar de ser vendedor, você não pode possuir itens à venda. Por favor retire seus itens na aba Meus produtos.";
+                        return RedirectToAction("Update");
+                       }
+                       else {
+                        await _userInterface.UpdateUser(user);
+                        _session.UpdateUserSession(user);
+                        return RedirectToAction("Index", "Home");
+                       }
+                    }
                 }
 
                 return View("Update");
@@ -44,7 +54,7 @@ namespace ProjetoInter.Controllers
             catch (Exception erro)
             {
                 TempData["MensagemErro"] = $"Ops, não conseguimos atualizar seus dados,por favor tente novamente, detalhe do erro: {erro.Message}";
-                return RedirectToAction("Create");
+                return RedirectToAction("Update");
             }
 
         }
