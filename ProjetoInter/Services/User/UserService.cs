@@ -97,7 +97,20 @@ namespace ProjetoInter.Services.User
         public UserModel GetUserMarketCarCount(UserModel user)
         {
             int count = _dbContext.MarketCars.Where(mc => mc.UserId == user.Id).Count();
-            user.MarketCarProductsCount = count;
+            user.MarketCarProductsCount = count; //bolinha vermelha
+            return user;
+        }
+
+        public UserModel GetUserMarketCarTotalValue(UserModel user, List<ProductModel> products)
+        {
+            float totalValue = 0;
+            for (int i = 0; i < products.Count(); i++)
+            {
+                var product = products[i];
+                totalValue += float.Parse(product.Value);
+            }
+
+            user.MarketCarProductsTotalValue = totalValue;
             return user;
         }
     }

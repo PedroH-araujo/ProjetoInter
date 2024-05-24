@@ -1,16 +1,46 @@
 ﻿@using ProjetoInter.Controllers
-@model List<ProductModel>
+@model HomeIndexViewModel
 
 <div class="py-5">
 
-    <div class="container">
+    @if (TempData["MensagemSuccess"] != null)
+        {
+            <div class="alert alert-info" role="alert">
+                <button type="button" class="btn btn btn-sm close-alert" data-bs-dismiss="alert" aria-label="Close">
+                    X
+                </button>
+                @TempData["MensagemSuccess"]
+            </div>
+        }
+
+        <div class="wrapper position-static">
+            <div class="sidebar-market-car bottom-0 end-0 position-absolute">
+                <div class="d-flex flex-column gap-64 justify-content-start">
+                    <div class="flex flex-column">
+                        <p>
+                            Endereço para entrega: @Model.User.Address
+                        </p>
+                        <p>
+                            Quantidade de produtos: @Model.Products.Count()
+                        </p>
+                        <p>
+                            Valor total: R$ @Model.User.MarketCarProductsTotalValue
+                        </p>
+                    </div>
+                    <div>
+                        <a class="btn btn-success w-100" style="font-size:16px" asp-action="buyProducts" asp-route-id="@Model.Products" asp-controller="MarketCar" >Finalizar Compra</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="container flex ">
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-0 ">
             @if (Model != null)
             {
-                if (Model.Count() > 0)
+                if (Model.Products.Count() > 0)
                 {
-                    @foreach (var product in Model)
+                    @foreach (var product in Model.Products)
                     {
                         <div class="card mx-3 my-3 text-center justify-content-center d-flex align-content-center" style="width: 12rem;">
                             @if (product.ImageUrl != null)

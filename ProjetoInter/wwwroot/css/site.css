@@ -39,6 +39,13 @@ body {
     position: relative;
 }
 
+.sidebar-market-car {
+    width: 270px;
+    height: 30%;
+    background: #c9c4c4;
+    padding: 30px 0px;
+}
+
     .wrapper .sidebar {
         width: 200px;
         height: 100%;
@@ -80,4 +87,8 @@ body {
 
 .active {
     background-color: #594f8d;
+}
+
+.gap-64 {
+    gap: 64px;
 }

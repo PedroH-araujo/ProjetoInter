@@ -154,11 +154,35 @@ namespace ProjetoInter.Services.MarketCar
                 // Filtrar os produtos que estão nos carrinhos de compras do usuário
                 var productsInMyCart = products.Where(product =>
                     product.MarketCartId != null &&
-                    product.MarketCartId.Any(id => myMarketCarIds.Contains(id))
+                    product.MarketCartId.Any(id => myMarketCarIds.Contains(id)) &&
+                    product.IsActive == true
                 ).ToList();
 
                 // Retornar a lista de produtos filtrados
                 return productsInMyCart;
+
+            }
+            catch(Exception ex) 
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<ProductModel>> BuyProducts(List<ProductModel> products)
+        {
+             try
+            {
+                for (int i = 0; i < products.Count(); i++)
+                {
+                    var product = products[i];
+                    product.IsActive = false;
+                    Console.WriteLine("asdsad");
+                    Console.WriteLine(product);
+
+                    _dbContext.Update(product);
+                    await _dbContext.SaveChangesAsync();
+                }
+                return products;
 
             }
             catch(Exception ex) 

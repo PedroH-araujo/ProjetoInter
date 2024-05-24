@@ -26,7 +26,9 @@ namespace ProjetoInter.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now; // Valor padrão: data e hora atual
         public string? Phone { get; set; }
         [NotMapped]
-        public int? MarketCarProductsCount { get; set; }
+        public int? MarketCarProductsCount { get; set; } // valor da bolinha vermelha
+        [NotMapped]
+        public float? MarketCarProductsTotalValue { get; set; } // valor total dos produtos no carrinho
         [NotMapped]
         public ICollection<ProductModel>? ProductsSold { get; set; }
         [NotMapped]

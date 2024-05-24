@@ -8,5 +8,6 @@ namespace ProjetoInter.Services.MarketCar
         Task<MarketCarModel> RemoveFromMarketCar(Guid productId);
         Task<List<MarketCarModel>> GetMyMarketCars(Guid userId);
         Task<List<ProductModel>> GetProductsInMyMarketCar();
+        Task<List<ProductModel>> BuyProducts(List<ProductModel> products);
     }
 }
