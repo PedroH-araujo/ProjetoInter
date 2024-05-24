@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ProductModel>
+﻿@model ProductIndexViewModel
 
 <div class="py-5">
     <div class="container">
@@ -7,13 +7,36 @@
            <a class="btn btn-success" asp-action="Create" asp-controller="Product">Cadastrar novo produto</a>
        </div>
 
+        <div class="text-center mb-5">
+            <form method="get" asp-action="Index" asp-controller="Product" class="d-flex justify-content-center">
+                <select name="activeProducts"  class="form-select">
+                    @if (Model.ActiveProducts == true)
+                    {
+                        <option value="true" selected>Produtos ativos</option>
+                        <option value="false">Produtos inativos</option>
+                    }
+                    else if (Model.ActiveProducts == false)
+                    {
+                        <option value="true">Produtos ativos</option>
+                        <option value="false" selected>Produtos inativos</option>
+                    }
+                    else
+                    {
+                        <option value="true">Produtos ativos</option>
+                        <option value="false">Produtos inativos</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary mx-2 w-10">Buscar</button>
+            </form>
+        </div>
+
         <div class="row row-cols-1 row-cols-sm-2  row-cols-md-3 g-0">
 
             @if (Model != null)
             {
-                @if (Model.Count() > 0)
+                @if (Model.Products.Count() > 0)
                 {
-                    @foreach (var product in Model)
+                    @foreach (var product in Model.Products)
                     {
 
                         <div class="card mx-3 my-3 p-2" style="width: 12rem">

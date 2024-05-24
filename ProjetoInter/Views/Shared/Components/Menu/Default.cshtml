@@ -1,34 +1,60 @@
 ﻿@model UserModel
 
-<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Olá @Model.Name</a>
-<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-        aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-</button>
-<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-    <ul class="navbar-nav flex-grow-1">
-        <li class="nav-item">
-            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="Update">Perfil</a>
-        </li>
-        @if(Model.Role == UserRole.seller)
-        {
-            <li class="nav-item">
-                <a class="nav-link text-white" asp-area="" asp-controller="Product" asp-action="Index">Meus produtos</a>
+<div class="wrapper">
+    <div class="sidebar">
+        <h2>Olá @Model.Name</h2>
+        <ul>
+            <li class="@(IsActive("Home", "Index") ? "active" : "")">
+                <a asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-home"></i>Home
+                </a>
             </li>
-        }
-        <li class="nav-item position-relative">
-            <a class="nav-link text-white " asp-area="" asp-controller="User" asp-action="Update">Meu carrinho</a>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                @Model.MarketCarProductsCount
-                <span class="visually-hidden">unread messages</span>
-            </span>
-        </li>
-       
-        <li class="nav-item">
-            <a class="nav-link text-white" asp-area="" asp-controller="Login" asp-action="LogOut">Sair</a>
-        </li>
-    </ul>
+            <li class="@(IsActive("User", "Update") ? "active" : "")">
+                <a asp-area="" asp-controller="User" asp-action="Update">
+                    <i class="fas fa-user"></i>Perfil
+                </a>
+            </li>
+            @if (Model.Role == UserRole.seller)
+            {
+                <li class="@(IsActive("Product", "Index") ? "active" : "")">
+                    <a asp-area="" asp-controller="Product" asp-action="Index">
+                        <i class="fas fa-address-card"></i>Meus Produtos
+                    </a>
+                </li>
+            }
+            <li class="position-relative @(IsActive("MarketCar", "Index") ? "active" : "")">
+                <a asp-area="" asp-controller="MarketCar" asp-action="Index">
+                    <i class="fas fa-project-diagram"></i>Meu carrinho
+                </a>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    @Model.MarketCarProductsCount
+                    <span class="visually-hidden">unread messages</span>
+                </span>
+            </li>
+            <li>
+                <a asp-area="" asp-controller="Login" asp-action="LogOut">
+                    <i class="fas fa-blog"></i>Sair
+                </a>
+            </li>
+        </ul>
+    </div>
 </div>
+
+@functions {
+    private bool IsActive(string controller, string action)
+    {
+    /*
+    URL: / Home / Index
+    routeData["controller"]: "Home"
+    routeData["action"]: "Index"
+    controller: "Home"
+    action: "Index"
+    */
+        var routeData = ViewContext.RouteData.Values;
+        var currentController = routeData["controller"]?.ToString();
+        var currentAction = routeData["action"]?.ToString();
+
+        return string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) &&
+               string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase);
+    }
+}

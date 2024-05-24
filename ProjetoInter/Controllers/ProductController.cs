@@ -8,10 +8,17 @@ namespace ProjetoInter.Controllers
     public class ProductController(IProductInterface productInterface) : Controller
     {
         private readonly IProductInterface _productInterface = productInterface;
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool? activeProducts)
         {
-            var products = await _productInterface.GetMyProducts();
-            return View(products);
+            var products = await _productInterface.GetMyProducts(activeProducts ?? true);
+            var viewModel = new ProductIndexViewModel
+            {
+                Products = products,
+                ActiveProducts = activeProducts
+            };
+
+            return View(viewModel);
+
         }
 
         public IActionResult Create()
@@ -66,6 +73,12 @@ namespace ProjetoInter.Controllers
                 TempData["MensagemErro"] = $"Ops, não coneguimos editar seu produto, tente novamente, detalhe do erro: {erro.Message}";
                 return RedirectToAction("Create");
             }
+        }
+
+        public async Task<IActionResult> InactivateProduct(Guid id)
+        {
+            var product = await _productInterface.InactivateProduct(id);
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> RemoveProduct(Guid id)

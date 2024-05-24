@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjetoInter.Models;
 using ProjetoInter.Services.MarketCar;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ProjetoInter.Controllers
 {
@@ -12,14 +13,10 @@ namespace ProjetoInter.Controllers
         {
             _marketCarInterface = marketCarInterface;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
-        }
-
-        public IActionResult Add()
-        {
-            return View();
+            var products = await _marketCarInterface.GetProductsInMyMarketCar();
+            return View(products);
         }
 
         public async Task<IActionResult> AddToMarketCar(Guid id)
@@ -27,7 +24,8 @@ namespace ProjetoInter.Controllers
             try
             {
                 await _marketCarInterface.AddToMarketCar(id);
-                return RedirectToAction("Add");
+                TempData["MensagemSuccess"] = $"Produto adicionado ao carrinho com sucesso";
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception erro)
             {
@@ -36,17 +34,13 @@ namespace ProjetoInter.Controllers
             }
         }
 
-        public IActionResult Remove()
-        {
-            return View();
-        }
-
         public async Task<IActionResult> RemoveFromMarketCar(Guid id)
         {
             try
             {
                 await _marketCarInterface.RemoveFromMarketCar(id);
-                return RedirectToAction("Remove");
+                TempData["MensagemSuccess"] = $"Produto removido do carrinho com sucesso";
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception erro)
             {

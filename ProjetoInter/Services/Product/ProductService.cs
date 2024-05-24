@@ -61,12 +61,12 @@ namespace ProjetoInter.Services.Produto
             return user;
         }
 
-        public async Task<List<ProductModel>> GetMyProducts()
+        public async Task<List<ProductModel>> GetMyProducts(bool? active)
         {
             UserModel user = GetUser();
             try
             {
-                return await _dbContext.Products.Where(product => product.SellerId == user.Id).ToListAsync();
+                return await _dbContext.Products.Where(product => product.SellerId == user.Id && product.IsActive == active).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -167,6 +167,24 @@ namespace ProjetoInter.Services.Produto
             }
         }
 
+        public async Task<ProductModel> InactivateProduct(Guid id)
+        {
+            try
+            {
+                var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
+                product.IsActive = false;
+
+                _dbContext.Update(product);
+                await _dbContext.SaveChangesAsync();
+
+                return product;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<ProductModel> DeleteProduct(Guid id)
         {
             try
@@ -205,8 +223,6 @@ namespace ProjetoInter.Services.Produto
                 throw new Exception(ex.Message);
             }
         }
-
-        
 
         public async Task<List<MarketCarModel>> GetMyMarketCars(Guid userId)
         {

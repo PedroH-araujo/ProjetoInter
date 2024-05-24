@@ -5,6 +5,16 @@
 
     <div class="container">
 
+        @if (TempData["MensagemSuccess"] != null)
+        {
+            <div class="alert alert-info" role="alert">
+                <button type="button" class="btn btn btn-sm close-alert" data-bs-dismiss="alert" aria-label="Close">
+                    X
+                </button>
+                @TempData["MensagemSuccess"]
+            </div>
+        }
+
         <div class="text-center mb-5">
             <form method="get" asp-action="Index" asp-controller="Home" class="d-flex justify-content-center">
                 <input name="Search" class="form-control w-50 mx-2" style="border:1px solid black;" />

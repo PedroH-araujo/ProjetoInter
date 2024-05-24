@@ -36,9 +36,9 @@ namespace ProjetoInter.Controllers
                 if (ModelState.IsValid)
                 {
                     if(user.Role == UserRole.buyer) {
-                       var myProducts = await _productInterface.GetMyProducts();
-                       if(myProducts.Count() != 0) {
-                        TempData["MensagemErro"] = $"Para deixar de ser vendedor, você não pode possuir itens à venda. Por favor retire seus itens na aba Meus produtos.";
+                       var myProducts = await _productInterface.GetMyProducts(true);
+                       if(myProducts.Any(p => p.IsActive)) {
+                        TempData["MensagemErro"] = $"Para deixar de ser vendedor, você não pode possuir itens à venda. Por favor inative seus itens na aba Meus produtos.";
                         return RedirectToAction("Update");
                        }
                        else {

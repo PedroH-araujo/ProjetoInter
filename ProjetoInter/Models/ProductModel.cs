@@ -25,6 +25,7 @@ namespace ProjetoInter.Models
         [NotMapped]
         public UserModel? Seller { get; set; } // Propriedade de navegação
         public Guid[]? MarketCartId { get; set; }
+        public bool IsActive { get; set; } = true;
         [NotMapped]
         public bool IsProductInMyMarketCart { get; set; }
         [NotMapped]

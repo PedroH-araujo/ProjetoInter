@@ -28,10 +28,7 @@ namespace ProjetoInter.Controllers
             var viewModel = new HomeIndexViewModel();
             string userSession = _httpContext.HttpContext.Session.GetString("sessionUserLogged");
             UserModel user = JsonConvert.DeserializeObject<UserModel>(userSession);
-            if (user == null)
-            {
-                Console.WriteLine("NAO TEM USER");
-            }
+
             viewModel.User = user;
 
             if (search == null)
