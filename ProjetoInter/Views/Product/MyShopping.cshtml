@@ -1,0 +1,38 @@
+﻿@model List<ProductModel>
+
+<div class="py-5">
+    <div class="container">
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-0 ">
+            @if (Model != null)
+            {
+                if (Model.Count() > 0)
+                {
+                    @foreach (var product in Model)
+                    {
+                        <div class="card mx-3 my-3 text-center justify-content-center d-flex align-content-center" style="width: 12rem;">
+                            @if (product.ImageUrl != null)
+                            {
+                                <img src="/imagem/@product.ImageUrl" class="card-img-top" style="width:190px; height:150px">
+                            }
+                            else
+                            {
+                                <img src="/imagem/emptyImage.png" class="card-img-top" style="width:190px; height:150px">
+                            }
+                            <div class="card-body">
+                                <h5 class="card-title">@product.Title</h5>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Preço: <strong>R$ @product.Value</strong> </li>
+                            </ul>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Data da compra: <div class="d-flex gap-2 justify-content-center"><strong>@product.UpdatedAt.ToShortDateString()</strong><strong>@product.UpdatedAt.ToShortTimeString()</strong></div> </li>
+                            </ul>
+                        </div>
+                    }
+                }
+            }
+        </div>
+
+    </div>
+</div>

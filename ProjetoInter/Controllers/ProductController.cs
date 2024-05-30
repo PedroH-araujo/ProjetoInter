@@ -1,13 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjetoInter.Models;
+using ProjetoInter.Services.MarketCar;
 using ProjetoInter.Services.Produto;
 using ProjetoInter.Services.User;
 
 namespace ProjetoInter.Controllers
 {
-    public class ProductController(IProductInterface productInterface) : Controller
+    public class ProductController(IProductInterface productInterface, IMarketCarInterface marketCarInterface) : Controller
     {
         private readonly IProductInterface _productInterface = productInterface;
+        private readonly IMarketCarInterface _marketCarInterface = marketCarInterface;
         public async Task<IActionResult> Index(bool? activeProducts)
         {
             var products = await _productInterface.GetMyProducts(activeProducts ?? true);
@@ -75,12 +77,6 @@ namespace ProjetoInter.Controllers
             }
         }
 
-        public async Task<IActionResult> InactivateProduct(Guid id)
-        {
-            var product = await _productInterface.InactivateProduct(id);
-            return RedirectToAction("Index");
-        }
-
         public async Task<IActionResult> RemoveProduct(Guid id)
         {
             var product = await _productInterface.DeleteProduct(id);
@@ -90,6 +86,12 @@ namespace ProjetoInter.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
             var product = await _productInterface.GetProductById(id);
+            return View(product);
+        }
+
+        public async Task<IActionResult> MyShopping(Guid id)
+        {
+            var product = await _marketCarInterface.GetMyPurshasedProducts();
             return View(product);
         }
 

@@ -10,6 +10,6 @@ namespace ProjetoInter.Services.User
         UserModel CreateUser(UserModel user);
         Task<UserModel> UpdateUser(UserModel user);
         UserModel GetUserMarketCarCount(UserModel user);
-         public UserModel GetUserMarketCarTotalValue(UserModel user, List<ProductModel> products);
+        UserModel GetUserMarketCarTotalValue(UserModel user, List<ProductModel> products);
     }
 }

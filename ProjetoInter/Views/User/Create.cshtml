@@ -33,7 +33,7 @@
     </div>
     <div class="mb-3">
         <label for="Phone" class="form-label" >Telefone</label>
-        <input type="tel" asp-for="Phone" class="form-control" id="Phone">
+        <input class="form-control" type="tel" asp-for=Phone id="Phone" name="Phone" placeholder="(017)99999-9999" pattern="\(\d{3}\)\d{5}-\d{4}" required>
     </div>
     <select class="form-select" asp-for="Role">
         <option value="seller">Vendedor</option>

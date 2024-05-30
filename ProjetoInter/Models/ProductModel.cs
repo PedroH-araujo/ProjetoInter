@@ -17,9 +17,10 @@ namespace ProjetoInter.Models
         [Required(ErrorMessage = "Digite a descrição do produto")]
         public required string Description { get; set; }
         [Required(ErrorMessage = "Digite o valor do produto")]
-        public required string Value { get; set; }
+        public required float Value { get; set; }
         public ProductStatus Status { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now; // Valor padrão: data e hora atual
+        public DateTime UpdatedAt { get; set; } = DateTime.Now; // Valor padrão: data e hora atual
         public string? ImageUrl { get; set; }
         public Guid? SellerId { get; set; }
         [NotMapped]

@@ -69,6 +69,8 @@ namespace ProjetoInter.Services.User
                 dbUser.Address = user.Address;
                 dbUser.Phone = user.Phone;
                 dbUser.Role = user.Role;
+                string passwordHash = HashPassword(user.Password);
+                dbUser.Password = passwordHash;
 
                 _dbContext.Update(dbUser);
                 await _dbContext.SaveChangesAsync();
@@ -96,7 +98,7 @@ namespace ProjetoInter.Services.User
 
         public UserModel GetUserMarketCarCount(UserModel user)
         {
-            int count = _dbContext.MarketCars.Where(mc => mc.UserId == user.Id).Count();
+            int count = _dbContext.MarketCars.Where(mc => mc.UserId == user.Id && mc.IsActive == true).Count();
             user.MarketCarProductsCount = count; //bolinha vermelha
             return user;
         }
@@ -107,7 +109,7 @@ namespace ProjetoInter.Services.User
             for (int i = 0; i < products.Count(); i++)
             {
                 var product = products[i];
-                totalValue += float.Parse(product.Value);
+                totalValue += product.Value;
             }
 
             user.MarketCarProductsTotalValue = totalValue;

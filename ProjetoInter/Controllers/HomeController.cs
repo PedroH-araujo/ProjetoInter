@@ -23,7 +23,7 @@ namespace ProjetoInter.Controllers
             _httpContext = httpContext;
         }
 
-        public async Task<IActionResult> Index(string? search)
+        public async Task<IActionResult> Index(ProductSearch? search)
         {
             var viewModel = new HomeIndexViewModel();
             string userSession = _httpContext.HttpContext.Session.GetString("sessionUserLogged");
@@ -31,7 +31,7 @@ namespace ProjetoInter.Controllers
 
             viewModel.User = user;
 
-            if (search == null)
+            if (string.IsNullOrEmpty(search.Name) && string.IsNullOrEmpty(search.Status.ToString()) && search.MinimumValue == 0 && search.MaximumValue == 0)
             {
                 var products = await _productInterface.GetProducts();
                 viewModel.Products = products;
@@ -41,6 +41,7 @@ namespace ProjetoInter.Controllers
             {
                 var products = await _productInterface.GetFilteredProducts(search);
                 viewModel.Products = products;
+                viewModel.Search = search;
                 return View(viewModel);
             }
         }

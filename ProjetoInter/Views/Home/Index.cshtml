@@ -16,10 +16,66 @@
         }
 
         <div class="text-center mb-5">
-            <form method="get" asp-action="Index" asp-controller="Home" class="d-flex justify-content-center">
-                <input name="Search" class="form-control w-50 mx-2" style="border:1px solid black;" />
-                <button type="submit" class="btn btn-primary w-10">Pesquisar</button>
-            </form>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-filter me-2"></i>Filtros
+                </button>
+                <ul class="dropdown-menu">
+                    <form method="post" asp-action="Index" asp-controller="Home" class="d-flex justify-content-center gap-4">
+                        <div>
+                            <label for="Name" class="form-label">Nome do produto</label>
+                            <input value="@Model.Search?.Name" name="Name" class="form-control mx-2" id="Name" style="border:1px solid black;" />
+                        </div>
+                        <div>
+                            <label for="Status" class="form-label">Estado do produto:</label>
+                            <select class="form-select" name="Status" id="Status">
+                                @if (Model.Search?.Status == null)
+                                {
+                                    <option selected value="">Todos</option>
+                                    <option value="@ProductStatus.sligthly_damaged">Pouco danificado</option>
+                                    <option value="@ProductStatus.perfect">Em perfeito estado</option>
+                                    <option value="@ProductStatus.heavily_damaged">Muito danificado</option>
+                                } 
+                                else if (Model.Search?.Status == ProductStatus.sligthly_damaged)
+                                {
+
+                                    <option value="">Todos</option>
+                                    <option selected value="@ProductStatus.sligthly_damaged">Pouco danificado</option>
+                                    <option value="@ProductStatus.perfect">Em perfeito estado</option>
+                                    <option value="@ProductStatus.heavily_damaged">Muito danificado</option>
+                                }
+                                else if (Model.Search?.Status == ProductStatus.perfect)
+                                {
+
+                                    <option value="">Todos</option>
+                                    <option value="@ProductStatus.sligthly_damaged">Pouco danificado</option>
+                                    <option selected value="@ProductStatus.perfect">Em perfeito estado</option>
+                                    <option value="@ProductStatus.heavily_damaged">Muito danificado</option>
+                                }
+                                else if (Model.Search?.Status == ProductStatus.heavily_damaged)
+                                {
+
+                                    <option value="">Todos</option>
+                                    <option value="@ProductStatus.sligthly_damaged">Pouco danificado</option>
+                                    <option value="@ProductStatus.perfect">Em perfeito estado</option>
+                                    <option selected value="@ProductStatus.heavily_damaged">Muito danificado</option>
+                                }
+                            </select>
+                        </div>
+                        <div>
+                            <label for="MinimumValue" class="form-label">Valor acima de:</label>
+                            <input value="@Model.Search?.MinimumValue" type="number" name="MinimumValue" class="form-control mx-2" id="MinimumValue" style="border:1px solid black;" />
+                        </div>
+                        <div>
+                            <label for="MaximumValue" class="form-label">Valor abaixo de:</label>
+                            <input value="@Model.Search?.MaximumValue" type="number" name="MaximumValue" class="form-control mx-2" id="MaximumValue" style="border:1px solid black;" />
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-10">Pesquisar</button>
+                    </form>
+                </ul>
+            </div>
+           
         </div>
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-0 ">

@@ -127,11 +127,11 @@ namespace ProjetoInter.Services.MarketCar
             return user;
         }
 
-       public async Task<List<MarketCarModel>> GetMyMarketCars(Guid userId)
+       public async Task<List<MarketCarModel>> GetMyMarketCars(Guid userId, bool active = true)
         {
             try
             {
-                return await _dbContext.MarketCars.Where(m => m.UserId == userId).ToListAsync();
+                return await _dbContext.MarketCars.Where(m => m.UserId == userId && m.IsActive == active).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -168,24 +168,61 @@ namespace ProjetoInter.Services.MarketCar
             }
         }
 
-        public async Task<List<ProductModel>> BuyProducts(List<ProductModel> products)
+        public async Task<List<ProductModel>> BuyProducts()
         {
              try
             {
+                List<ProductModel> products = await GetProductsInMyMarketCar();
                 for (int i = 0; i < products.Count(); i++)
                 {
                     var product = products[i];
                     product.IsActive = false;
-                    Console.WriteLine("asdsad");
-                    Console.WriteLine(product);
 
                     _dbContext.Update(product);
-                    await _dbContext.SaveChangesAsync();
                 }
+                List<MarketCarModel> myMarketCars = await GetMyMarketCars(GetUser().Id);
+                for (int i = 0; i < myMarketCars.Count(); i++)
+                {
+                    var myMarketCar = myMarketCars[i];
+                    myMarketCar.IsActive = false;
+                    myMarketCar.UpdatedAt = DateTime.Now;
+
+                    _dbContext.Update(myMarketCar);
+                }
+                await _dbContext.SaveChangesAsync();
                 return products;
 
             }
             catch(Exception ex) 
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<ProductModel>> GetMyPurshasedProducts()
+        {
+            try
+            {
+                // Obter os IDs dos carrinhos de compras do usuário
+                var userId = GetUser().Id;
+                var myMarketCars = await GetMyMarketCars(userId, false);
+                var myMarketCarIds = myMarketCars.Select(mc => mc.Id).ToHashSet();
+
+                // Obter todos os produtos do banco de dados
+                var products = await _dbContext.Products.ToListAsync();
+
+                // Filtrar os produtos que estão nos carrinhos de compras do usuário
+                var productsInMyCart = products.Where(product =>
+                    product.MarketCartId != null &&
+                    product.MarketCartId.Any(id => myMarketCarIds.Contains(id)) &&
+                    product.IsActive == false
+                ).ToList();
+
+                // Retornar a lista de produtos filtrados
+                return productsInMyCart;
+
+            }
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }

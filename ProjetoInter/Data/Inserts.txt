@@ -1,0 +1,26 @@
+﻿-- TABELA DE USUÁRIOS
+-- Insert 1
+INSERT INTO Users (Id, Name, Email, Password, Role, CreatedAt, Address, Phone)
+VALUES ('1085DCE7-CF05-4E5A-B6F1-EFF3BDE97F2E', 'Comprador 1', 'comprador1@example.com', '7dc86e9b65c838f345f1488d8a2c30b5804db8e0770c12fbd94f890a77177b2d', 1, GETDATE(), 'Endereço do Usuário 1', '123456789');
+
+-- Insert 2
+INSERT INTO Users (Id, Name, Email, Password, Role, CreatedAt, Address, Phone)
+VALUES ('FD954B54-A5AD-4FAD-9B5C-909D971E1888', 'Vendedor 1', 'vendedor1@example.com', '7dc86e9b65c838f345f1488d8a2c30b5804db8e0770c12fbd94f890a77177b2d', 0, GETDATE(), 'Endereço do Usuário 2', '987654321');
+
+-- Insert 3
+INSERT INTO Users (Id, Name, Email, Password, Role, CreatedAt, Address, Phone)
+VALUES ('0F6B144E-DB07-43E1-816C-28B9970421AB', 'Comprador 2', 'comprador2@example.com', '7dc86e9b65c838f345f1488d8a2c30b5804db8e0770c12fbd94f890a77177b2d', 1, GETDATE(), 'Endereço do Usuário 3', '986565657');
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- TABELA DE PRODUTOS
+-- Insert 1
+INSERT INTO Products (Id, Title, Description, Value, Status, CreatedAt, UpdatedAt, SellerId, IsActive)
+VALUES ('9D9E4FE9-9FB8-40C5-B2B4-8BCE06001169', 'Produto 1', 'Descrição do Produto 1', '100.00', 1, GETDATE(), GETDATE(), 'FD954B54-A5AD-4FAD-9B5C-909D971E1888', 1);
+
+-- Insert 2
+INSERT INTO Products (Id, Title, Description, Value, Status, CreatedAt, UpdatedAt, SellerId, IsActive)
+VALUES ('3D292364-C7DA-4671-8650-55A14EAD9B39', 'Produto 2', 'Descrição do Produto 2', '200.00', 0, GETDATE(), GETDATE(), 'FD954B54-A5AD-4FAD-9B5C-909D971E1888', 1);
+
+-- Insert 3
+INSERT INTO Products (Id, Title, Description, Value, Status, CreatedAt, UpdatedAt, SellerId, IsActive)
+VALUES ('CFD3C622-451C-47B6-9FB7-3C0FF5307BE7', 'Produto 3', 'Descrição do Produto 3', '300.00', 2, GETDATE(), GETDATE(),'FD954B54-A5AD-4FAD-9B5C-909D971E1888', 1);
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

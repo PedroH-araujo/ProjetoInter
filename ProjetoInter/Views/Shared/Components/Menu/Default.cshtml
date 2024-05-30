@@ -2,8 +2,7 @@
 
 <div class="wrapper">
     <div class="sidebar">
-        <h2>Olá @Model.Name</h2>
-        <ul>
+        <ul class="p-0">
             <li class="@(IsActive("Home", "Index") ? "active" : "")">
                 <a asp-area="" asp-controller="Home" asp-action="Index">
                     <i class="fas fa-home"></i>Home
@@ -24,16 +23,21 @@
             }
             <li class="position-relative @(IsActive("MarketCar", "Index") ? "active" : "")">
                 <a asp-area="" asp-controller="MarketCar" asp-action="Index">
-                    <i class="fas fa-project-diagram"></i>Meu carrinho
+                    <i class="fas fa-shopping-cart"></i>Meu carrinho
                 </a>
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                     @Model.MarketCarProductsCount <!--bolinha vermelha-->
                     <span class="visually-hidden">unread messages</span>
                 </span>
             </li>
+            <li class="@(IsActive("MyShopping", "Index") ? "active" : "")">
+                <a asp-area="" asp-controller="Product" asp-action="MyShopping">
+                    <i class="fas fa-server"></i>Minhas compras
+                </a>
+            </li>
             <li>
                 <a asp-area="" asp-controller="Login" asp-action="LogOut">
-                    <i class="fas fa-blog"></i>Sair
+                    <i class="fa fa-sign-out"></i>Sair
                 </a>
             </li>
         </ul>

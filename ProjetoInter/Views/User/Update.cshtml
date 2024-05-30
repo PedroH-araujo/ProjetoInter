@@ -35,12 +35,21 @@
     </div>
     <div class="mb-3">
         <label for="Phone" class="form-label">Telefone</label>
-        <input type="tel" asp-for="Phone" class="form-control" id="Phone">
+        <input class="form-control" type="tel" asp-for=Phone id="Phone" name="Phone" placeholder="(017)99999-9999" pattern="\(\d{3}\)\d{5}-\d{4}" required>
     </div>
     <select class="form-select" asp-for="Role">
         <option value=@UserRole.seller>Vendedor</option>
         <option value=@UserRole.buyer>Comprador</option>
     </select>
+    <div class="mb-3 border rounded border-black p-2 mt-3">
+        <label for="OldPassword" class="form-label">Redefinir senha</label>
+        <div>
+            <label>Senha atual</label>
+            <input class="form-control" type="password" id="OldPassword" name="OldPassword" required>
+            <label>Nova senha</label>
+            <input class="form-control" type="password" id="NewPassword" name="NewPassword" required>
+        </div>
+    </div>
     <button type="submit" class="btn btn-primary mt-3">Atualizar</button>
     <button class="btn btn-secondary mt-3" asp-controller="Login" asp-action="Index">Cancelar</button>
 </form>

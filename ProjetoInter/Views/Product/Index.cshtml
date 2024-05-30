@@ -13,17 +13,17 @@
                     @if (Model.ActiveProducts == true)
                     {
                         <option value="true" selected>Produtos ativos</option>
-                        <option value="false">Produtos inativos</option>
+                        <option value="false">Produtos vendidos</option>
                     }
                     else if (Model.ActiveProducts == false)
                     {
                         <option value="true">Produtos ativos</option>
-                        <option value="false" selected>Produtos inativos</option>
+                        <option value="false" selected>Produtos vendidos</option>
                     }
                     else
                     {
                         <option value="true">Produtos ativos</option>
-                        <option value="false">Produtos inativos</option>
+                        <option value="false">Produtos vendidos</option>
                     }
                 </select>
                 <button type="submit" class="btn btn-primary mx-2 w-10">Buscar</button>
@@ -55,10 +55,14 @@
                                 <h5 class="card-title">@product.Title</h5>
                             </div>
 
-                            <div class="card-body">
-                                <a class="btn btn-warning w-100 mb-2" asp-action="Update" asp-controller="Product" asp-route-id="@product.Id">Editar</a>
-                                <a class="btn btn-danger w-100" asp-action="RemoveProduct" asp-controller="Product" asp-route-id="@product.Id">Remover</a>
-                            </div>
+                            @if(product.IsActive == true)
+                            {
+                                <div class="card-body">
+                                    <a class="btn btn-warning w-100 mb-2" asp-action="Update" asp-controller="Product" asp-route-id="@product.Id">Editar</a>
+                                    <a class="btn btn-danger w-100" asp-action="RemoveProduct" asp-controller="Product" asp-route-id="@product.Id">Remover</a>
+                                </div>
+                            }
+
 
 
                         </div>

@@ -67,14 +67,12 @@ namespace ProjetoInter.Controllers
             }
         }
 
-        public async Task<IActionResult> buyProducts(List<ProductModel> products)
+        public async Task<IActionResult> BuyProducts()
         {
 
-            Console.WriteLine("asdsadsda");
-            Console.WriteLine(products);
             try
             {
-                await _marketCarInterface.BuyProducts(products);
+                await _marketCarInterface.BuyProducts();
                 TempData["MensagemSuccess"] = $"Compra realizada com sucesso";
                 return RedirectToAction("Index");
             }

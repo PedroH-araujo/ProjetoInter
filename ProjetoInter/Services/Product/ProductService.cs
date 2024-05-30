@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using ProjetoInter.Data;
 using ProjetoInter.Models;
@@ -78,7 +79,7 @@ namespace ProjetoInter.Services.Produto
         {
             try
             {
-                List<ProductModel> products = await _dbContext.Products.Where(p => p.SellerId != GetUser().Id).ToListAsync();
+                List<ProductModel> products = await _dbContext.Products.Where(p => p.SellerId != GetUser().Id && p.IsActive == true).ToListAsync();
                 var formattedProducts = await SetIsProductInMyMarketCart(products);
                 return formattedProducts;
             }
@@ -155,29 +156,12 @@ namespace ProjetoInter.Services.Produto
                 dbProduct.Description = product.Description;
                 dbProduct.Status = product.Status;
                 dbProduct.Value = product.Value;
+                dbProduct.UpdatedAt = DateTime.Now;
 
                 _dbContext.Update(dbProduct);
                 await _dbContext.SaveChangesAsync();
 
                 return dbProduct;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<ProductModel> InactivateProduct(Guid id)
-        {
-            try
-            {
-                var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
-                product.IsActive = false;
-
-                _dbContext.Update(product);
-                await _dbContext.SaveChangesAsync();
-
-                return product;
             }
             catch (Exception ex)
             {
@@ -209,18 +193,43 @@ namespace ProjetoInter.Services.Produto
             }
         }
 
-        public async Task<List<ProductModel>> GetFilteredProducts(string? filter)
+        public async Task<List<ProductModel>> GetFilteredProducts(ProductSearch? filter)
         {
             try
             {
-                var products = await _dbContext.Products.Where(p => p.Title.Contains(filter) && p.SellerId != GetUser().Id).ToListAsync();
+                var query = _dbContext.Products.AsQueryable();
+
+                // Aplica os filtros que podem ser traduzidos diretamente para SQL
+                if (!string.IsNullOrEmpty(filter.Name))
+                {
+                    query = query.Where(p => p.Title.Contains(filter.Name));
+                }
+
+                if (!string.IsNullOrEmpty(filter.Status.ToString()))
+                {
+                    query = query.Where(p => p.Status == filter.Status);
+                }
+
+                query = query.Where(p => p.SellerId != GetUser().Id && p.IsActive);
+
+                // Aplicar os filtros numéricos
+                if (filter.MinimumValue != 0)
+                {
+                    query = query.Where(p => p.Value >= filter.MinimumValue);
+                }
+
+                if (filter.MaximumValue != 0)
+                {
+                    query = query.Where(p => p.Value <= filter.MaximumValue);
+                }
+
+                var products = await query.ToListAsync();
                 var formattedProducts = await SetIsProductInMyMarketCart(products);
                 return formattedProducts;
-
-            } 
+            }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new Exception("Error filtering products: " + ex.Message, ex);
             }
         }
 
@@ -235,5 +244,7 @@ namespace ProjetoInter.Services.Produto
                 throw new Exception(ex.Message);
             }
         }
+
+
     }
 }

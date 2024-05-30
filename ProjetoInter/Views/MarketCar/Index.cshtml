@@ -28,7 +28,12 @@
                         </p>
                     </div>
                     <div>
-                        <a class="btn btn-success w-100" style="font-size:16px" asp-action="buyProducts" asp-route-id="@Model.Products" asp-controller="MarketCar" >Finalizar Compra</a>
+                    @if (@Model.Products.Count() == 0)
+                    {
+                        <p>Nenhum item no carrinho</p>
+                    } else {
+                        <a class="btn btn-success w-100" style="font-size:16px" asp-action="BuyProducts" asp-controller="MarketCar" >Finalizar Compra</a>
+                    }
                     </div>
                 </div>
             </div>

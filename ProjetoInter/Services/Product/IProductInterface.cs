@@ -9,8 +9,7 @@ namespace ProjetoInter.Services.Produto
         Task<List<ProductModel>> GetMyProducts(bool? active);
         Task<ProductModel> GetProductById(Guid id);
         Task<ProductModel> UpdateProduct(ProductModel product, IFormFile image);
-        Task<ProductModel> InactivateProduct(Guid id);
-        Task<List<ProductModel>> GetFilteredProducts(string? filter);
+        Task<List<ProductModel>> GetFilteredProducts(ProductSearch? filter);
         Task<ProductModel> DeleteProduct(Guid id);
     }
 }

@@ -35,6 +35,7 @@ namespace ProjetoInter.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    UserModel actualUser = _session.GetUserSession();
                     if(user.Role == UserRole.buyer) {
                        var myProducts = await _productInterface.GetMyProducts(true);
                        if(myProducts.Any(p => p.IsActive)) {
@@ -42,9 +43,18 @@ namespace ProjetoInter.Controllers
                         return RedirectToAction("Update");
                        }
                        else {
-                        await _userInterface.UpdateUser(user);
-                        _session.UpdateUserSession(user);
-                        return RedirectToAction("Index", "Home");
+                            string oldPassword = HttpContext.Request.Form["OldPassword"];
+                            bool isValidPassword = actualUser.ValidPassword(oldPassword);
+                            if (isValidPassword != true || oldPassword == null)
+                            {
+                                TempData["MensagemErro"] = $"Senha atual incorreta, tente novamente";
+                                return RedirectToAction("Update");
+                            }
+                            string newPassword = HttpContext.Request.Form["NewPassword"];
+                            user.Password = newPassword;
+                            await _userInterface.UpdateUser(user);
+                            _session.UpdateUserSession(user);
+                            return RedirectToAction("Index", "Home");
                        }
                     }
                 }
