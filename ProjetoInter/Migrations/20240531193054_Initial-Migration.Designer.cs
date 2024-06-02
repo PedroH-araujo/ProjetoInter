@@ -12,8 +12,8 @@ using ProjetoInter.Data;
 namespace ProjetoInter.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240525031848_novo-marketcar2")]
-    partial class novomarketcar2
+    [Migration("20240531193054_Initial-Migration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -87,9 +87,11 @@ namespace ProjetoInter.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<float>("Value")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
 

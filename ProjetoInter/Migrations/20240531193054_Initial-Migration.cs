@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProjetoInter.Migrations
 {
     /// <inheritdoc />
-    public partial class novoDB : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -36,12 +36,14 @@ namespace ProjetoInter.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Value = table.Column<float>(type: "real", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SellerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    MarketCartId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    MarketCartId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -60,7 +62,9 @@ namespace ProjetoInter.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

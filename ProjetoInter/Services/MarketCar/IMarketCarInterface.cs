@@ -9,6 +9,7 @@ namespace ProjetoInter.Services.MarketCar
         Task<List<MarketCarModel>> GetMyMarketCars(Guid userId, bool active = true);
         Task<List<ProductModel>> GetProductsInMyMarketCar();
         Task<List<ProductModel>> BuyProducts();
-        Task<List<ProductModel>> GetMyPurshasedProducts();
+        Task<List<ProductModel>> GetMyPurchasedProducts();
+        Task<List<MarketCarModel>> GetMarketCarsByProduct(Guid productId);
     }
 }

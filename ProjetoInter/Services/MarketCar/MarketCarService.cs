@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using ProjetoInter.Data;
@@ -170,18 +171,22 @@ namespace ProjetoInter.Services.MarketCar
 
         public async Task<List<ProductModel>> BuyProducts()
         {
-             try
+            try
             {
                 List<ProductModel> products = await GetProductsInMyMarketCar();
-                for (int i = 0; i < products.Count(); i++)
+                for (int i = 0; i < products.Count; i++)
                 {
                     var product = products[i];
                     product.IsActive = false;
 
+                    // Aguarde a conclusão da exclusão antes de continuar
+                    await DeleteMarketCartFromSoldProduct(product.Id);
+
                     _dbContext.Update(product);
                 }
+
                 List<MarketCarModel> myMarketCars = await GetMyMarketCars(GetUser().Id);
-                for (int i = 0; i < myMarketCars.Count(); i++)
+                for (int i = 0; i < myMarketCars.Count; i++)
                 {
                     var myMarketCar = myMarketCars[i];
                     myMarketCar.IsActive = false;
@@ -189,17 +194,42 @@ namespace ProjetoInter.Services.MarketCar
 
                     _dbContext.Update(myMarketCar);
                 }
+
                 await _dbContext.SaveChangesAsync();
                 return products;
-
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
 
-        public async Task<List<ProductModel>> GetMyPurshasedProducts()
+        private async Task DeleteMarketCartFromSoldProduct(Guid productId)
+        {
+            UserModel user = GetUser();
+            try
+            {
+                var marketCars = await _dbContext.MarketCars
+                    .Where(m => m.UserId != user.Id && m.IsActive && m.ProductId == productId)
+                    .ToListAsync();
+
+                for (int i = 0; i < marketCars.Count; i++)
+                {
+                    var marketCar = marketCars[i];
+
+                    _dbContext.Remove(marketCar);
+                }
+
+                // Salvar as mudanças após a remoção
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<ProductModel>> GetMyPurchasedProducts()
         {
             try
             {
@@ -221,6 +251,18 @@ namespace ProjetoInter.Services.MarketCar
                 // Retornar a lista de produtos filtrados
                 return productsInMyCart;
 
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<MarketCarModel>> GetMarketCarsByProduct(Guid productId)
+        {
+            try
+            {
+                return await _dbContext.MarketCars.Where(m => m.ProductId == productId && m.IsActive == true).ToListAsync();
             }
             catch (Exception ex)
             {

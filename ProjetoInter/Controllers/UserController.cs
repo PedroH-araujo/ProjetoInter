@@ -39,22 +39,25 @@ namespace ProjetoInter.Controllers
                     if(user.Role == UserRole.buyer) {
                        var myProducts = await _productInterface.GetMyProducts(true);
                        if(myProducts.Any(p => p.IsActive)) {
-                        TempData["MensagemErro"] = $"Para deixar de ser vendedor, você não pode possuir itens à venda. Por favor inative seus itens na aba Meus produtos.";
+                        TempData["MensagemErro"] = $"Para deixar de ser vendedor, você não pode possuir itens à venda. Por favor remova seus itens na aba Meus produtos.";
                         return RedirectToAction("Update");
                        }
                        else {
                             string oldPassword = HttpContext.Request.Form["OldPassword"];
-                            bool isValidPassword = actualUser.ValidPassword(oldPassword);
-                            if (isValidPassword != true || oldPassword == null)
+                            if (oldPassword != null)
                             {
-                                TempData["MensagemErro"] = $"Senha atual incorreta, tente novamente";
-                                return RedirectToAction("Update");
+                                bool isValidPassword = actualUser.ValidPassword(oldPassword);
+                                if (isValidPassword != true || oldPassword == null)
+                                {
+                                    TempData["MensagemErro"] = $"Senha atual incorreta, tente novamente";
+                                    return RedirectToAction("Update");
+                                }
+                                string newPassword = HttpContext.Request.Form["NewPassword"];
+                                user.Password = newPassword;
+                                await _userInterface.UpdateUser(user);
+                                _session.UpdateUserSession(user);
+                                return RedirectToAction("Index", "Home");
                             }
-                            string newPassword = HttpContext.Request.Form["NewPassword"];
-                            user.Password = newPassword;
-                            await _userInterface.UpdateUser(user);
-                            _session.UpdateUserSession(user);
-                            return RedirectToAction("Index", "Home");
                        }
                     }
                 }

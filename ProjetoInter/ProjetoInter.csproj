@@ -21,8 +21,4 @@
     <PackageReference Include="Portable.BouncyCastle" Version="1.9.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>

@@ -91,7 +91,7 @@ namespace ProjetoInter.Controllers
 
         public async Task<IActionResult> MyShopping(Guid id)
         {
-            var product = await _marketCarInterface.GetMyPurshasedProducts();
+            var product = await _marketCarInterface.GetMyPurchasedProducts();
             return View(product);
         }
 
