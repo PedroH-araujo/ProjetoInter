@@ -16,8 +16,6 @@ com o banco de dados que deseja utilizar.
 
 `dotnet add package Microsoft.EntityFrameworkCore.SqlServer --version 8.0.4`
 
-### Migrations
-
 #### Instalar o Entity Framework
 `dotnet tool install --global dotnet-ef`
 
