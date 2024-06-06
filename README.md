@@ -3,18 +3,18 @@
 ### Bibliotecas necessárias
 
 
-`dotnet add package Microsoft.EntityFrameworkCore --version 8.0.4-preview.3.24172.4`
+`dotnet add package Microsoft.EntityFrameworkCore --version 8.0.4`
 
-`dotnet add package Microsoft.EntityFrameworkCore.Design --version 8.0.4-preview.3.24172.4`
+`dotnet add package Microsoft.EntityFrameworkCore.Design --version 8.0.4`
 
-`dotnet add package Microsoft.EntityFrameworkCore.Tools --version 8.0.4-preview.3.24172.4`
+`dotnet add package Microsoft.EntityFrameworkCore.Tools --version 8.0.4`
 
 Você precisará instalar as bibliotecas de acordo
 com o banco de dados que deseja utilizar.
 
 #### Sql Server
 
-`dotnet add package Microsoft.EntityFrameworkCore.SqlServer --version 8.0.4-preview.3.24172.4`
+`dotnet add package Microsoft.EntityFrameworkCore.SqlServer --version 8.0.4`
 
 ### Migrations
 
