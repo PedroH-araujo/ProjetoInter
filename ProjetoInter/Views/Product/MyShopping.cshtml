@@ -4,10 +4,14 @@
     <div class="container">
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-0 ">
+
+            <!--Se a listagem for diferente de nulo-->
             @if (Model != null)
             {
+                <!--Se a listagem for maior que 0-->
                 if (Model.Count() > 0)
                 {
+                    <!--Para cada produto, cira um card-->
                     @foreach (var product in Model)
                     {
                         <div class="card mx-3 my-3 text-center justify-content-center d-flex align-content-center" style="width: 12rem;">

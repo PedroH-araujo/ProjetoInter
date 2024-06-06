@@ -4,6 +4,7 @@ using ProjetoInter.Services.Produto;
 using Microsoft.EntityFrameworkCore;
 using ProjetoInter.Helper;
 using ProjetoInter.Services.MarketCar;
+using ProjetoInter.Services.Shared;
 
 //     "DefaultConnection": "server=localhost;database=Production;User=aluno;Password=dba;TrustServerCertificate=True"
 //     "DefaultConnection": "server=DESKTOP-K2MKISJ; database=Production; trusted_connection = true; trustservercertificate=true"
@@ -20,7 +21,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 //Inje��o de depend�ncia
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddScoped<IUserInterface, UserService>(); 
+builder.Services.AddScoped<ISharedMethodsInterface, SharedMethods>();
+builder.Services.AddScoped<IUserInterface, UserService>();
 builder.Services.AddScoped<IProductInterface, ProductService>();
 builder.Services.AddScoped<ISessionInterface, Session>();
 builder.Services.AddScoped<IMarketCarInterface, MarketCarService>();

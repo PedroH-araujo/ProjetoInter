@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using ProjetoInter.Data;
 using ProjetoInter.Models;
+using ProjetoInter.Services.Shared;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace ProjetoInter.Services.Produto
@@ -11,19 +12,20 @@ namespace ProjetoInter.Services.Produto
     {
         private readonly AppDbContext _dbContext;
         private readonly string _system;
-        private readonly IHttpContextAccessor _httpContext;
-        public ProductService(AppDbContext dbContext, IWebHostEnvironment system, IHttpContextAccessor _httpContext)
+        private readonly ISharedMethodsInterface _sharedMethods;
+
+        public ProductService(AppDbContext dbContext, IWebHostEnvironment system, ISharedMethodsInterface sharedMethods)
         {
             this._dbContext = dbContext;
             this._system = system.WebRootPath;
-            this._httpContext = _httpContext;
+            _sharedMethods = sharedMethods;
         }
         public async Task<ProductModel> CreateProduct(ProductModel product, IFormFile image)
         {
             var imageUrl = (image != null) ? GetImageUrl(image) : null;
             product.ImageUrl = imageUrl;
 
-            UserModel user = GetUser();
+            UserModel user = _sharedMethods.GetUser();
 
             product.SellerId = user.Id;
 
@@ -54,17 +56,9 @@ namespace ProjetoInter.Services.Produto
             return ImageUrl;
         }
 
-        private UserModel GetUser()
-        {
-            string userSession = _httpContext.HttpContext.Session.GetString("sessionUserLogged");
-            UserModel user = JsonConvert.DeserializeObject<UserModel>(userSession);
-
-            return user;
-        }
-
         public async Task<List<ProductModel>> GetMyProducts(bool? active)
         {
-            UserModel user = GetUser();
+            UserModel user = _sharedMethods.GetUser();
             try
             {
                 return await _dbContext.Products.Where(product => product.SellerId == user.Id && product.IsActive == active).ToListAsync();
@@ -79,7 +73,7 @@ namespace ProjetoInter.Services.Produto
         {
             try
             {
-                List<ProductModel> products = await _dbContext.Products.Where(p => p.SellerId != GetUser().Id && p.IsActive == true).ToListAsync();
+                List<ProductModel> products = await _dbContext.Products.Where(p => p.SellerId != _sharedMethods.GetUser().Id && p.IsActive == true).ToListAsync();
                 var formattedProducts = await SetIsProductInMyMarketCart(products);
                 return formattedProducts;
             }
@@ -103,7 +97,7 @@ namespace ProjetoInter.Services.Produto
 
         private async Task<List<ProductModel>> SetIsProductInMyMarketCart(List<ProductModel> products)
         {
-            var user = GetUser();
+            var user = _sharedMethods.GetUser();
             var myMarketCar = await GetMyMarketCars(user.Id);
 
             var myMarketCarIds = myMarketCar.Select(mc => mc.Id).ToHashSet();
@@ -210,17 +204,17 @@ namespace ProjetoInter.Services.Produto
                     query = query.Where(p => p.Status == filter.Status);
                 }
 
-                query = query.Where(p => p.SellerId != GetUser().Id && p.IsActive);
+                query = query.Where(p => p.SellerId != _sharedMethods.GetUser().Id && p.IsActive);
 
                 // Aplicar os filtros numéricos
                 if (filter.MinimumValue != 0)
                 {
-                    query = query.Where(p => p.Value >= filter.MinimumValue);
+                    query = query.Where(p => p.Value > filter.MinimumValue);
                 }
 
                 if (filter.MaximumValue != 0)
                 {
-                    query = query.Where(p => p.Value <= filter.MaximumValue);
+                    query = query.Where(p => p.Value < filter.MaximumValue);
                 }
 
                 var products = await query.ToListAsync();

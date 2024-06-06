@@ -4,18 +4,19 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using ProjetoInter.Data;
 using ProjetoInter.Models;
+using ProjetoInter.Services.Shared;
 
 namespace ProjetoInter.Services.MarketCar
 {
     public class MarketCarService : IMarketCarInterface
     {
         private readonly AppDbContext _dbContext;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly ISharedMethodsInterface _sharedMethods;
 
-        public MarketCarService(AppDbContext dbContext, IHttpContextAccessor httpContext)
+        public MarketCarService(AppDbContext dbContext, ISharedMethodsInterface sharedMethods)
         {
             _dbContext = dbContext;
-            _httpContext = httpContext;
+            _sharedMethods = sharedMethods;
         }
 
         public async Task<MarketCarModel> AddToMarketCar(Guid productId)
@@ -24,7 +25,7 @@ namespace ProjetoInter.Services.MarketCar
             {
                 MarketCarModel productInMarketCar = new MarketCarModel();
                 productInMarketCar.ProductId = productId;
-                productInMarketCar.UserId = GetUser().Id;
+                productInMarketCar.UserId = _sharedMethods.GetUser().Id;
 
                 _dbContext.Add(productInMarketCar);
                 await _dbContext.SaveChangesAsync();
@@ -111,21 +112,13 @@ namespace ProjetoInter.Services.MarketCar
         public async Task<MarketCarModel> RemoveFromMarketCar(Guid productId)
         {
             MarketCarModel productInMarketCar = new MarketCarModel();
-            Guid userId = GetUser().Id;
+            Guid userId = _sharedMethods.GetUser().Id;
             productInMarketCar = await _dbContext.MarketCars.FirstOrDefaultAsync(marketCar => marketCar.UserId == userId && marketCar.ProductId == productId);
             await RemoveProductMarketCarId(productInMarketCar.Id, productId);
 
             _dbContext.Remove(productInMarketCar);
             await _dbContext.SaveChangesAsync();
             return productInMarketCar;
-        }
-
-        private UserModel GetUser()
-        {
-            string userSession = _httpContext.HttpContext.Session.GetString("sessionUserLogged");
-            UserModel user = JsonConvert.DeserializeObject<UserModel>(userSession);
-
-            return user;
         }
 
        public async Task<List<MarketCarModel>> GetMyMarketCars(Guid userId, bool active = true)
@@ -145,7 +138,7 @@ namespace ProjetoInter.Services.MarketCar
              try
             {
                 // Obter os IDs dos carrinhos de compras do usuário
-                var userId = GetUser().Id;
+                var userId = _sharedMethods.GetUser().Id;
                 var myMarketCars = await GetMyMarketCars(userId);
                 var myMarketCarIds = myMarketCars.Select(mc => mc.Id).ToHashSet();
 
@@ -185,7 +178,7 @@ namespace ProjetoInter.Services.MarketCar
                     _dbContext.Update(product);
                 }
 
-                List<MarketCarModel> myMarketCars = await GetMyMarketCars(GetUser().Id);
+                List<MarketCarModel> myMarketCars = await GetMyMarketCars(_sharedMethods.GetUser().Id);
                 for (int i = 0; i < myMarketCars.Count; i++)
                 {
                     var myMarketCar = myMarketCars[i];
@@ -206,7 +199,7 @@ namespace ProjetoInter.Services.MarketCar
 
         private async Task DeleteMarketCartFromSoldProduct(Guid productId)
         {
-            UserModel user = GetUser();
+            UserModel user = _sharedMethods.GetUser();
             try
             {
                 var marketCars = await _dbContext.MarketCars
@@ -234,7 +227,7 @@ namespace ProjetoInter.Services.MarketCar
             try
             {
                 // Obter os IDs dos carrinhos de compras do usuário
-                var userId = GetUser().Id;
+                var userId = _sharedMethods.GetUser().Id;
                 var myMarketCars = await GetMyMarketCars(userId, false);
                 var myMarketCarIds = myMarketCars.Select(mc => mc.Id).ToHashSet();
 

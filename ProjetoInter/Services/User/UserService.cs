@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using ProjetoInter.Data;
 using ProjetoInter.Models;
+using ProjetoInter.Services.Shared;
 using System;
 using System.Security.Cryptography;
 using System.Text;
@@ -12,12 +13,12 @@ namespace ProjetoInter.Services.User
     public class UserService : IUserInterface
     {
         private readonly AppDbContext _dbContext;
-        private readonly IHttpContextAccessor _httpContext;
+        private readonly ISharedMethodsInterface _sharedMethods;
 
-        public UserService(AppDbContext dbContext, IHttpContextAccessor httpContext)
+        public UserService(AppDbContext dbContext, ISharedMethodsInterface sharedMethods)
         {
             this._dbContext = dbContext;
-            _httpContext = httpContext;
+            _sharedMethods = sharedMethods;
         }
 
         private string hashKey = "AD5DC23AF55662306";
@@ -69,8 +70,11 @@ namespace ProjetoInter.Services.User
                 dbUser.Address = user.Address;
                 dbUser.Phone = user.Phone;
                 dbUser.Role = user.Role;
-                string passwordHash = HashPassword(user.Password);
-                dbUser.Password = passwordHash;
+                if (user.Password != dbUser.Password)
+                {
+                    string passwordHash = HashPassword(user.Password);
+                    dbUser.Password = passwordHash;
+                }
 
                 _dbContext.Update(dbUser);
                 await _dbContext.SaveChangesAsync();
@@ -83,17 +87,9 @@ namespace ProjetoInter.Services.User
             }
         }
 
-        private UserModel GetUser()
-        {
-            string userSession = _httpContext.HttpContext.Session.GetString("sessionUserLogged");
-            UserModel user = JsonConvert.DeserializeObject<UserModel>(userSession);
-
-            return user;
-        }
-
         public UserModel GetUserById()
         {
-            return _dbContext.Users.FirstOrDefault(user => user.Id == GetUser().Id);
+            return _dbContext.Users.FirstOrDefault(user => user.Id == _sharedMethods.GetUser().Id);
         }
 
         public UserModel GetUserMarketCarCount(UserModel user)

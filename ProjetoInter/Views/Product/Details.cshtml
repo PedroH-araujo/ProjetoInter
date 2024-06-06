@@ -2,7 +2,14 @@
 
 <div class="container my-5">
     <div class="p-5 text-center bg-body-tertiary rounded-3">
-        <img src="/imagem/@Model.ImageUrl" style="width:350px; height:350px" />
+        @if (Model.ImageUrl != null)
+        {
+            <img src="/imagem/@Model.ImageUrl" class="card-img-top" style="width:350px; height:350px">
+        }
+        else
+        {
+            <img src="/imagem/emptyImage.png" class="card-img-top" style="width:350px; height:350px">
+        }
         <h1 class="text-body-emphasis">@Model.Title</h1>
         <p class="col-lg-8 mx-auto fs-5 text-muted">
             @Model.Description

@@ -36,30 +36,40 @@ namespace ProjetoInter.Controllers
                 if (ModelState.IsValid)
                 {
                     UserModel actualUser = _session.GetUserSession();
-                    if(user.Role == UserRole.buyer) {
-                       var myProducts = await _productInterface.GetMyProducts(true);
-                       if(myProducts.Any(p => p.IsActive)) {
-                        TempData["MensagemErro"] = $"Para deixar de ser vendedor, você não pode possuir itens à venda. Por favor remova seus itens na aba Meus produtos.";
-                        return RedirectToAction("Update");
-                       }
-                       else {
-                            string oldPassword = HttpContext.Request.Form["OldPassword"];
-                            if (oldPassword != null)
-                            {
-                                bool isValidPassword = actualUser.ValidPassword(oldPassword);
-                                if (isValidPassword != true || oldPassword == null)
-                                {
-                                    TempData["MensagemErro"] = $"Senha atual incorreta, tente novamente";
-                                    return RedirectToAction("Update");
-                                }
-                                string newPassword = HttpContext.Request.Form["NewPassword"];
-                                user.Password = newPassword;
-                                await _userInterface.UpdateUser(user);
-                                _session.UpdateUserSession(user);
-                                return RedirectToAction("Index", "Home");
-                            }
-                       }
+                    if (user.Role == UserRole.buyer)
+                    {
+                        var myProducts = await _productInterface.GetMyProducts(true);
+                        if (myProducts.Any(p => p.IsActive))
+                        {
+                            TempData["MensagemErro"] = $"Para deixar de ser vendedor, você não pode possuir itens à venda. Por favor remova seus itens na aba Meus produtos.";
+                            return RedirectToAction("Update");
+                        }
                     }
+                      
+                    string oldPassword = HttpContext.Request.Form["OldPassword"];
+                    if (oldPassword != "")
+                    {
+                        bool isValidPassword = actualUser.ValidPassword(oldPassword);
+                        if (isValidPassword != true || oldPassword == null)
+                        {
+                            TempData["MensagemErro"] = $"Senha atual incorreta, tente novamente";
+                            return RedirectToAction("Update");
+                        }
+                        string newPassword = HttpContext.Request.Form["NewPassword"];
+                        user.Password = newPassword;
+                        await _userInterface.UpdateUser(user);
+                        _session.UpdateUserSession(user);
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        user.Password = actualUser.Password;
+                        await _userInterface.UpdateUser(user);
+                        _session.UpdateUserSession(user);
+                        return RedirectToAction("Index", "Home");
+                    }
+                       
+                    
                 }
 
                 return View("Update");
