@@ -171,6 +171,7 @@ namespace ProjetoInter.Services.MarketCar
                 {
                     var product = products[i];
                     product.IsActive = false;
+                    product.UpdatedAt = DateTime.Now;
 
                     // Aguarde a conclusão da exclusão antes de continuar
                     await DeleteMarketCartFromSoldProduct(product.Id);
