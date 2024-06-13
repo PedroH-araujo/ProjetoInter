@@ -18,13 +18,17 @@ namespace ProjetoInter.Models
         [Required(ErrorMessage = "Digite o nome")]
         public required string Name { get; set; }
         [Required(ErrorMessage = "Digite o email")]
+        [StringLength(100, ErrorMessage = "O email deve ter no máximo 100 caracteres")]
         public required string Email { get; set; }
         [Required(ErrorMessage = "Digite a senha")]
         public required string Password { get; set; }
         public UserRole Role { get; set; }
-        public string? Address { get; set; }
+        [Required(ErrorMessage = "Digite um endereço")]
+        [StringLength(100, ErrorMessage = "O endereço deve ter no máximo 100 caracteres")]
+        public required string Address { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now; // Valor padrão: data e hora atual
         public string? Phone { get; set; }
+        [StringLength(200, ErrorMessage = "O telefone deve ter no máximo 20 caracteres")]
         [NotMapped]
         public int? MarketCarProductsCount { get; set; } // valor da bolinha vermelha
         [NotMapped]

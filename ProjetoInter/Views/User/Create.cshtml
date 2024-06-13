@@ -30,6 +30,7 @@
     <div class="mb-3">
         <label for="Address" class="form-label" >Endereço</label>
         <input type="text" asp-for="Address" class="form-control" id="Address">
+        @Html.ValidationMessageFor(x => x.Address, "", new { @class = "text-danger" })
     </div>
     <div class="mb-3">
         <label for="Phone" class="form-label" >Telefone</label>

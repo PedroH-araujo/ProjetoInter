@@ -47,7 +47,7 @@ namespace ProjetoInter.Controllers
             }
             catch (Exception erro)
             {
-                TempData["MensagemErro"] = $"Ops, não coneguimos editar seu produto, tente novamente, detalhe do erro: {erro.Message}";
+                TempData["MensagemErro"] = $"Ops, não conseguimos adicionar seu produto, tente novamente, detalhe do erro: {erro.Message}";
                 return RedirectToAction("Index", "Home");
             }
         }
@@ -62,7 +62,7 @@ namespace ProjetoInter.Controllers
             }
             catch (Exception erro)
             {
-                TempData["MensagemErro"] = $"Ops, não coneguimos editar seu produto, tente novamente, detalhe do erro: {erro.Message}";
+                TempData["MensagemErro"] = $"Ops, não conseguimos remover seu produto, tente novamente, detalhe do erro: {erro.Message}";
                 return RedirectToAction("Index", "Home");
             }
         }

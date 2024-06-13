@@ -63,7 +63,6 @@ namespace ProjetoInter.Controllers
                     }
                     else
                     {
-                        user.Password = actualUser.Password;
                         await _userInterface.UpdateUser(user);
                         _session.UpdateUserSession(user);
                         return RedirectToAction("Index", "Home");
@@ -99,7 +98,7 @@ namespace ProjetoInter.Controllers
             }
             catch (Exception erro)
             {
-                TempData["MensagemErro"] = $"Ops, não coneguimos cadastrar seus dados, tente novamente, detalhe do erro: {erro.Message}";
+                TempData["MensagemErro"] = $"Ops, não conseguimos cadastrar seus dados, tente novamente, detalhe do erro: {erro.Message}";
                 return RedirectToAction("Create");
             }
         

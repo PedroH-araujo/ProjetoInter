@@ -14,6 +14,25 @@
         <p class="col-lg-8 mx-auto fs-5 text-muted">
             @Model.Description
         </p>
+        <p class="col-lg-8 mx-auto fs-5 text-muted">
+            @{
+                switch (Model.Status)
+                {
+                    case ProductStatus.perfect:
+                        @: <span>Em perfeito estado</span>
+                        break;
+                    case ProductStatus.heavily_damaged:
+                        @: <span>Muito danificado</span>
+                        break;
+                    case ProductStatus.sligthly_damaged:
+                        @: <span>Pouco danificado</span>
+                        break;
+                    default:
+                        @: <span>Desconhecido</span>
+                        break;
+                }
+            }
+        </p>
         <ul class="list-group list-group-flush">
             <li class="list-group-item">Preço: R$ @Model.Value</li>
         </ul>

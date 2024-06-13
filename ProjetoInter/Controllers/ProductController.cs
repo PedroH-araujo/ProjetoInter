@@ -48,7 +48,7 @@ namespace ProjetoInter.Controllers
             }
             catch (Exception erro)
             {
-                TempData["MensagemErro"] = $"Ops, não coneguimos cadastrar seu produto, tente novamente, detalhe do erro: {erro.Message}";
+                TempData["MensagemErro"] = $"Ops, não conseguimos cadastrar seu produto, tente novamente, detalhe do erro: {erro.Message}";
                 return RedirectToAction("Create");
             }
             
@@ -72,7 +72,7 @@ namespace ProjetoInter.Controllers
             }
             catch (Exception erro)
             {
-                TempData["MensagemErro"] = $"Ops, não coneguimos editar seu produto, tente novamente, detalhe do erro: {erro.Message}";
+                TempData["MensagemErro"] = $"Ops, não conseguimos editar seu produto, tente novamente, detalhe do erro: {erro.Message}";
                 return RedirectToAction("Create");
             }
         }

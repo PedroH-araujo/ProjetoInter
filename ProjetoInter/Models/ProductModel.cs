@@ -13,14 +13,16 @@ namespace ProjetoInter.Models
     {
         public Guid Id { get; set; }
         [Required(ErrorMessage = "Digite o título do produto")]
+        [StringLength(100, ErrorMessage = "O título deve ter no máximo 100 caracteres")]
         public required string Title { get; set; }
         [Required(ErrorMessage = "Digite a descrição do produto")]
+        [StringLength(500, ErrorMessage = "A descrição deve ter no máximo 500 caracteres")]
         public required string Description { get; set; }
         [Required(ErrorMessage = "Digite o valor do produto")]
         public required float Value { get; set; }
         public ProductStatus Status { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now; // Valor padrão: data e hora atual
-        public DateTime UpdatedAt { get; set; } = DateTime.Now; // Valor padrão: data e hora atual
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
         public string? ImageUrl { get; set; }
         public Guid? SellerId { get; set; }
         [NotMapped]

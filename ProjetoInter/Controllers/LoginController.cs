@@ -56,7 +56,7 @@ namespace ProjetoInter.Controllers
             }
             catch (Exception erro)
             {
-                TempData["MensagemErro"] = $"Ops, não coneguimos realizar seu login, tente novamente, detalhe do erro: {erro.Message}";
+                TempData["MensagemErro"] = $"Ops, não conseguimos realizar seu login, tente novamente, detalhe do erro: {erro.Message}";
                 return RedirectToAction("Index");
             }
         }

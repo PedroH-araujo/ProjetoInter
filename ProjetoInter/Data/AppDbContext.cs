@@ -15,12 +15,36 @@ namespace ProjetoInter.Data
                .HasKey(product =>  product.Id);  // Define a chave primária
 
             modelBuilder.Entity<ProductModel>()
+               .Property(product => product.Title)
+               .HasMaxLength(100);
+
+            modelBuilder.Entity<ProductModel>()
+                .Property(product => product.Description)
+                .HasMaxLength(500);
+
+            modelBuilder.Entity<ProductModel>()
                 .HasOne(product => product.Seller)               // Um produto tem um vendedor
                 .WithMany(user => user.ProductsSold)       // Um vendedor pode ter vários produtos
                 .HasForeignKey(product => product.SellerId);     // Chave estrangeira para SellerId na tabela de produtos
 
             modelBuilder.Entity<UserModel>()
                .HasKey(user => user.Id);    // Define a chave primária
+
+            modelBuilder.Entity<UserModel>()
+                .Property(user => user.Name)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<UserModel>()
+                .Property(user => user.Email)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<UserModel>()
+                .Property(user => user.Address)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<UserModel>()
+                .Property(user => user.Phone)
+                .HasMaxLength(20);
 
             modelBuilder.Entity<UserModel>()
                .HasMany(user => user.ProductsSold)      // Um usuário pode ter vários produtos vendidos
